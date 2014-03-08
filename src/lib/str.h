@@ -43,10 +43,10 @@ int pwm_str_cmp(pwm_str_t *a, pwm_str_t *b);
 /* reads a line from stream into s */
 int pwm_str_read_line(pwm_str_t *s, FILE *stream);
 
-/* encodes a raw byte string to hex and writes the result to dst */
-int pwm_str_encode_hex(pwm_str_t *dst, pwm_str_t *src);
+/* encodes a raw byte buffer to hex and writes the result to dst */
+int pwm_str_hex_encode(pwm_str_t *dst, const char *buf, size_t n);
 
-/* decodes a hex string to raw bytes and writes the result to dst */
-int pwm_str_decode_hex(pwm_str_t *dst, pwm_str_t *src);
+/* decodes a hex buffer to raw bytes and writes the result to dst */
+int pwm_str_hex_decode(pwm_str_t *dst, const char *buf, size_t n);
 
 #endif /* STR_H */

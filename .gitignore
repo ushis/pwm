@@ -4,6 +4,7 @@
 
 # bin
 pwm-del
+pwm-gen
 pwm-get
 pwm-list
 pwm-set

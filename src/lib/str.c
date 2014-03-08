@@ -55,7 +55,7 @@ int
 pwm_str_resize(pwm_str_t *s, size_t cap) {
   char *buf;
 
-  if ((buf = (char *) realloc(s->buf, cap+1)) == NULL) {
+  if ((buf = (char *) realloc(s->buf, (cap+1)*sizeof(char))) == NULL) {
     perror("pwm_str_resize: realloc");
     return -1;
   }
@@ -97,7 +97,7 @@ pwm_str_append_path_component(pwm_str_t *s, const char *buf, size_t n) {
     return -1;
   }
 
-  if (s->buf[s->len-1] != '/') {
+  if (s->len > 0 && s->buf[s->len-1] != '/') {
     s->buf[s->len] = '/';
     s->len++;
   }
@@ -124,7 +124,11 @@ pwm_str_read_line(pwm_str_t *s, FILE *stream) {
   size_t i = 0;
 
   while ((c = fgetc(stream)) != EOF) {
-    if (c == '\r' || c == '\n') {
+    if (c == '\r') {
+      continue;
+    }
+
+    if (c == '\n') {
       break;
     }
 
@@ -139,27 +143,27 @@ pwm_str_read_line(pwm_str_t *s, FILE *stream) {
 }
 
 int
-pwm_str_encode_hex(pwm_str_t *dst, pwm_str_t *src) {
-  size_t len = pwm_hex_encode_len(src->len);
+pwm_str_hex_encode(pwm_str_t *dst, const char *buf, size_t n) {
+  size_t len = pwm_hex_encode_len(n);
 
   if (dst->cap < len && pwm_str_resize(dst, len) < 0) {
     return -1;
   }
-  pwm_hex_encode(dst->buf, src->buf, src->len);
+  pwm_hex_encode(dst->buf, buf, n);
   dst->buf[len] = '\0';
   dst->len = len;
   return 0;
 }
 
 int
-pwm_str_decode_hex(pwm_str_t *dst, pwm_str_t *src) {
-  size_t len = pwm_hex_decode_len(src->len);
+pwm_str_hex_decode(pwm_str_t *dst, const char *buf, size_t n) {
+  size_t len = pwm_hex_decode_len(n);
 
   if (dst->cap < len && pwm_str_resize(dst, len) < 0) {
     return -1;
   }
 
-  if (pwm_hex_decode(dst->buf, src->buf, src->len) < 0) {
+  if (pwm_hex_decode(dst->buf, buf, n) < 0) {
     return -1;
   }
   dst->buf[len] = '\0';

@@ -6,6 +6,7 @@
 #define PWM_HOME_NAME ".pwm"
 
 #include "str.h"
+#include "gen.h"
 #include "db.h"
 
 /* finds the pwm home directory */
