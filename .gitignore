@@ -3,6 +3,7 @@
 *.swp
 
 # bin
+pwm
 pwm-del
 pwm-gen
 pwm-get
