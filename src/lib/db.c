@@ -30,7 +30,6 @@ fail:
 void
 pwm_db_free(pwm_db_t *db) {
   if (db != NULL) {
-    pwm_str_free(db->home);
     pwm_git_free(db->git);
     pwm_gpg_free(db->gpg);
     free(db);
@@ -58,18 +57,18 @@ pwm_db_has(pwm_db_t *db, const char *key) {
 int
 pwm_db_set(pwm_db_t *db, const char *key, pwm_str_t *src) {
   int err;
-  pwm_str_t *filename;
+  pwm_str_t filename = PWM_STR_INIT;
   char msg[strlen(key)+3];
 
-  if ((filename = pwm_str_cpy(db->home)) == NULL) {
-    return -1;
-  }
-
-  if ((err = pwm_str_append_path_component(filename, key, strlen(key))) < 0) {
+  if ((err = pwm_str_cpy(&filename, db->home)) < 0) {
     goto cleanup;
   }
 
-  if ((err = pwm_gpg_encrypt_to_file(db->gpg, filename->buf, src)) < 0) {
+  if ((err = pwm_str_append_path_component(&filename, key, strlen(key))) < 0) {
+    goto cleanup;
+  }
+
+  if ((err = pwm_gpg_encrypt_to_file(db->gpg, filename.buf, src)) < 0) {
     goto cleanup;
   }
 
@@ -80,7 +79,7 @@ pwm_db_set(pwm_db_t *db, const char *key, pwm_str_t *src) {
   err = pwm_git_commit(db->git, msg);
 
 cleanup:
-  pwm_str_free(filename);
+  pwm_str_free(&filename);
   return err;
 }
 

@@ -4,64 +4,46 @@
 #include <termios.h>
 #include "pwm.h"
 
-pwm_str_t *
-pwm_find_home() {
-  pwm_str_t *home;
+int
+pwm_find_home(pwm_str_t *s) {
   const char *buf;
 
   if ((buf = getenv(PWM_HOME_ENV_VAR)) != NULL) {
-    return pwm_str_new_from_buf(buf, strlen(buf));
+    return pwm_str_set(s, buf, strlen(buf));
   }
 
   if ((buf = getenv("HOME")) == NULL) {
-    return NULL;
+    return -1;
   }
 
-  if ((home = pwm_str_new_from_buf(buf, strlen(buf))) == NULL) {
-    return NULL;
+  if (pwm_str_set(s, buf, strlen(buf)) < 0) {
+    return -1;
   }
 
-  if (pwm_str_append_path_component(home, PWM_HOME_NAME, strlen(PWM_HOME_NAME)) < 0) {
-    pwm_str_free(home);
-    return NULL;
+  if (pwm_str_append_path_component(s, PWM_HOME_NAME, strlen(PWM_HOME_NAME)) < 0) {
+    return -1;
   }
-  return home;
+  return 0;
 }
 
-pwm_str_t *
-pwm_read_line(const char *prompt) {
-  pwm_str_t *s;
-
-  if ((s = pwm_str_new(4<<10)) == NULL) {
-    return NULL;
-  }
-  fprintf(stdout, "%s", prompt);
-
-  if (pwm_str_read_line(s, stdin) < 0) {
-    pwm_str_free(s);
-    return NULL;
-  }
-  return s;
-}
-
-pwm_str_t *
-pwm_read_line_hidden(const char *prompt) {
+int
+pwm_read_line_hidden(pwm_str_t *s, const char *prompt) {
   struct termios old_attr, new_attr;
-  pwm_str_t *s;
+  int err;
 
   if (tcgetattr(0, &old_attr) < 0) {
     perror("pwm_read_line: tcgetattr");
-    return NULL;
+    return -1;
   }
   new_attr = old_attr;
   new_attr.c_lflag &= ~ECHO;
 
   if (tcsetattr(0, TCSAFLUSH, &new_attr) < 0) {
     perror("pwm_read_line: tcgetattr");
-    return NULL;
+    return -1;
   }
-  s = pwm_read_line(prompt);
-  fprintf(stdout, "\n");
+  fprintf(stdout, "%s", prompt);
+  err = pwm_str_read_line(s, stdin);
   tcsetattr(0, TCSAFLUSH, &old_attr);
-  return s;
+  return err;
 }

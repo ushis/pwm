@@ -10,12 +10,9 @@
 #include "db.h"
 
 /* finds the pwm home directory */
-pwm_str_t *pwm_find_home();
+int pwm_find_home(pwm_str_t *s);
 
 /* */
-pwm_str_t *pwm_read_line(const char *prompt);
-
-/* */
-pwm_str_t *pwm_read_line_hidden(const char *prompt);
+int pwm_read_line_hidden(pwm_str_t *s, const char *prompt);
 
 #endif /* PWM_H */

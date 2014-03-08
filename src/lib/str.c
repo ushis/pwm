@@ -4,53 +4,6 @@
 #include "hex.h"
 #include "util.h"
 
-pwm_str_t *
-pwm_str_new(size_t cap) {
-  pwm_str_t *s;
-
-  if ((s = (pwm_str_t *) calloc(1, sizeof(pwm_str_t))) == NULL) {
-    perror("pwm_str_new: calloc");
-    return NULL;
-  }
-
-  if ((s->buf = (char *) calloc(cap+1, sizeof(char))) == NULL) {
-    perror("pwm_str_new: calloc");
-    free(s);
-    return NULL;
-  }
-  s->len = 0;
-  s->cap = cap;
-  return s;
-}
-
-pwm_str_t *
-pwm_str_new_from_buf(const char *buf, size_t n) {
-  pwm_str_t *s;
-
-  if ((s = pwm_str_new(n)) == NULL) {
-    return NULL;
-  }
-
-  if (pwm_str_set(s, buf, n) < 0) {
-    free(s);
-    return NULL;
-  }
-  return s;
-}
-
-pwm_str_t *
-pwm_str_cpy(pwm_str_t *s) {
-  return pwm_str_new_from_buf(s->buf, s->len);
-}
-
-void
-pwm_str_free(pwm_str_t *s) {
-  if (s != NULL) {
-    free(s->buf);
-    free(s);
-  }
-}
-
 int
 pwm_str_resize(pwm_str_t *s, size_t cap) {
   char *buf;
@@ -63,6 +16,19 @@ pwm_str_resize(pwm_str_t *s, size_t cap) {
   s->cap = cap;
   pwm_str_shrink(s, cap);
   return 0;
+}
+
+void
+pwm_str_free(pwm_str_t *s) {
+  free(s->buf);
+  s->buf = NULL;
+  s->len = 0;
+  s->cap = 0;
+}
+
+int
+pwm_str_cpy(pwm_str_t *dst, pwm_str_t *src) {
+  return pwm_str_set(dst, src->buf, src->len);
 }
 
 int

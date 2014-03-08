@@ -10,20 +10,16 @@ typedef struct {
   size_t cap;
 } pwm_str_t;
 
-/* allocates a new string with capacity cap */
-pwm_str_t *pwm_str_new(size_t cap);
+#define PWM_STR_INIT {NULL,0,0}
 
-/* allocates a new string and sets the buffer */
-pwm_str_t *pwm_str_new_from_buf(const char *buf, size_t n);
-
-/* copies a string */
-pwm_str_t *pwm_str_cpy(pwm_str_t *s);
+/* resizes the string buffer */
+int pwm_str_resize(pwm_str_t *s, size_t n);
 
 /* frees a string */
 void pwm_str_free(pwm_str_t *s);
 
-/* resizes the string buffer */
-int pwm_str_resize(pwm_str_t *s, size_t n);
+/* copies a string */
+int pwm_str_cpy(pwm_str_t *dst, pwm_str_t *src);
 
 /* sets the string buffer */
 int pwm_str_set(pwm_str_t *s, const char *buf, size_t n);
