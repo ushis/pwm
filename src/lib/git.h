@@ -12,9 +12,6 @@ typedef struct {
 } pwm_git_t;
 
 /* */
-typedef int (*pwm_git_walk_entries_cb)(const char *);
-
-/* */
 pwm_git_t *pwm_git_new(const char *path);
 
 /* */
@@ -39,6 +36,15 @@ int pwm_git_entry_content(pwm_git_t *git, pwm_str_t *dst, const char *path);
 int pwm_git_entry_exists(pwm_git_t *git, const char *path);
 
 /* */
+typedef int (*pwm_git_walk_entries_cb)(const char *name);
+
+/* */
 int pwm_git_walk_entries(pwm_git_t *git, pwm_git_walk_entries_cb cb);
+
+/* */
+typedef int (*pwm_git_walk_log_cb)(int64_t time, const char *name, const char *msg);
+
+/* */
+int pwm_git_walk_log(pwm_git_t *git, pwm_git_walk_log_cb cd);
 
 #endif /* GIT_H */

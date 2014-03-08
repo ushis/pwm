@@ -236,3 +236,41 @@ pwm_git_walk_entries(pwm_git_t *git, pwm_git_walk_entries_cb cb) {
   git_tree_free(tree);
   return err;
 }
+
+int
+pwm_git_walk_log(pwm_git_t *git, pwm_git_walk_log_cb cb) {
+  git_commit *commit, *parent;
+  const char *msg, *name;
+  int64_t time;
+  int err;
+
+  if (git_repository_is_empty(git->repo)) {
+    return 0;
+  }
+
+  if (pwm_git_last_commit(git, &commit) < 0) {
+    return -1;
+  }
+
+  for (;;) {
+    time = git_commit_time(commit);
+    name = git_commit_committer(commit)->name;
+    msg = git_commit_message(commit);
+
+    if ((err = cb(time, name, msg)) < 0) {
+      break;
+    }
+
+    if (git_commit_parentcount(commit) == 0) {
+      break;
+    }
+
+    if ((err = git_commit_parent(&parent, commit, 0)) < 0) {
+      break;
+    }
+    git_commit_free(commit);
+    commit = parent;
+  }
+  git_commit_free(commit);
+  return err;
+}

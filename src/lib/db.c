@@ -103,3 +103,8 @@ int
 pwm_db_list(pwm_db_t *db, pwm_git_walk_entries_cb cb) {
   return pwm_git_walk_entries(db->git, cb);
 }
+
+int
+pwm_db_log(pwm_db_t *db, pwm_git_walk_log_cb cb) {
+  return pwm_git_walk_log(db->git, cb);
+}

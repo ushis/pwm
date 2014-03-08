@@ -1,5 +1,5 @@
 SRC := $(shell find src/lib -name '*.c')
-BIN := pwm-del pwm-gen pwm-get pwm-list pwm-set
+BIN := pwm-del pwm-gen pwm-get pwm-list pwm-log pwm-set
 
 CFLAGS += -Wall -Isrc/lib -lgpgme -lgit2
 

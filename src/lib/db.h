@@ -39,4 +39,7 @@ int pwm_db_del(pwm_db_t *db, const char *key);
 /* lists all keys in the database */
 int pwm_db_list(pwm_db_t *db, pwm_git_walk_entries_cb cb);
 
+/* lists all log messages */
+int pwm_db_log(pwm_db_t *db, pwm_git_walk_log_cb cb);
+
 #endif /* DB_H */
