@@ -4,16 +4,15 @@
 #include "db.h"
 
 int
-pwm_db_new(pwm_db_t **out, pwm_str_t *home, const char *email) {
+pwm_db_new(pwm_db_t **out, const char *home, const char *email) {
   pwm_db_t *db;
 
   if ((db = (pwm_db_t *) calloc(1, sizeof(pwm_db_t))) == NULL) {
     perror("pwm_db_new: calloc");
     goto fail;
   }
-  db->home = home;
 
-  if (pwm_git_new(&db->git, home->buf) < 0) {
+  if (pwm_git_new(&db->git, home) < 0) {
     goto fail;
   }
 

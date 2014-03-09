@@ -7,13 +7,12 @@
 
 /* db struct */
 typedef struct {
-  pwm_str_t *home;
   pwm_git_t *git;
   pwm_gpg_t *gpg;
 } pwm_db_t;
 
 /* allocates a new database */
-int pwm_db_new(pwm_db_t **out, pwm_str_t *home, const char *email);
+int pwm_db_new(pwm_db_t **out, const char *home, const char *email);
 
 /* frees a database */
 void pwm_db_free(pwm_db_t *db);
