@@ -1,9 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include "gpg.h"
 
 pwm_gpg_t *
@@ -86,35 +82,37 @@ cleanup:
 }
 
 int
-pwm_gpg_encrypt_to_file(pwm_gpg_t *gpg, const char *filename, pwm_str_t *src) {
+pwm_gpg_encrypt(pwm_gpg_t *gpg, pwm_str_t *s) {
   gpgme_data_t cipher = NULL, plain = NULL;
   gpgme_error_t err;
-  int fd, rc = -1;
+  size_t len;
+  char *buf = NULL;
+  int rc = -1;
 
-  if ((fd = open(filename, O_WRONLY|O_TRUNC|O_CREAT, 0600)) < 0) {
-    perror("pwm_gpg_encrypt_to_file: open");
+  if ((err = gpgme_data_new_from_mem(&plain, s->buf, s->len, 1)) > 0) {
+    fprintf(stderr, "pwm_gpg_encrypt: %s\n", gpgme_strerror(err));
     goto cleanup;
   }
 
-  if ((err = gpgme_data_new_from_mem(&plain, src->buf, src->len, 0)) > 0) {
-    fprintf(stderr, "pwm_gpg_encrypt_to_file: %s\n", gpgme_strerror(err));
-    goto cleanup;
-  }
-
-  if ((err = gpgme_data_new_from_fd(&cipher, fd)) > 0) {
-    fprintf(stderr, "pwm_gpg_encrypt_to_file: %s\n", gpgme_strerror(err));
+  if ((err = gpgme_data_new(&cipher)) > 0) {
+    fprintf(stderr, "pwm_gpg_encrypt: %s\n", gpgme_strerror(err));
     goto cleanup;
   }
 
   if ((err = gpgme_op_encrypt_sign(gpg->ctx, gpg->keys, 0, plain, cipher)) > 0) {
-    fprintf(stderr, "pwm_gpg_encrypt_to_file: %s\n", gpgme_strerror(err));
+    fprintf(stderr, "pwm_gpg_encrypt: %s\n", gpgme_strerror(err));
+    gpgme_data_release(cipher);
     goto cleanup;
   }
-  rc = 0;
+
+  if ((buf = gpgme_data_release_and_get_mem(cipher, &len)) == NULL) {
+    perror("pwm_gpg_encrypt");
+    goto cleanup;
+  }
+  rc = pwm_str_set(s, buf, len);
 
 cleanup:
-  gpgme_data_release(cipher);
   gpgme_data_release(plain);
-  close(fd);
+  gpgme_free(buf);
   return rc;
 }

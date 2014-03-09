@@ -19,7 +19,7 @@ void pwm_gpg_free(pwm_gpg_t *gpg);
 /* decrypts the string */
 int pwm_gpg_decrypt(pwm_gpg_t *gpg, pwm_str_t *s);
 
-/* encrypts a plain text string into a file */
-int pwm_gpg_encrypt_to_file(pwm_gpg_t *gpg, const char *filename, pwm_str_t *s);
+/* encrypts a string */
+int pwm_gpg_encrypt(pwm_gpg_t *gpg, pwm_str_t *s);
 
 #endif /* GPG_H */

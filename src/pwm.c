@@ -68,7 +68,7 @@ cmd_exec(cmd_t *cmd, char **argv) {
   }
 
   if (pid == 0) {
-    argv[0] = cmd->path;
+    argv[0] = cmd->bin;
     execv(cmd->path, argv);
     perror("execv");
     return 1;
