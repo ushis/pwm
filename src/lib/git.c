@@ -88,16 +88,6 @@ pwm_git_free(pwm_git_t *git) {
 }
 
 int
-pwm_git_last_commit(pwm_git_t *git, git_commit **commit) {
-  git_oid oid;
-
-  if (git_reference_name_to_id(&oid, git->repo, "HEAD") < 0) {
-    return -1;
-  }
-  return git_commit_lookup(commit, git->repo, &oid);
-}
-
-int
 pwm_git_add(pwm_git_t *git, const char *path, const pwm_str_t *s) {
   git_treebuilder *bld = NULL;
   git_oid oid;
@@ -163,22 +153,28 @@ cleanup:
 }
 
 int
+pwm_git_head(pwm_git_t *git, git_commit **commit) {
+  return git_revparse_single((git_object **) commit, git->repo, "HEAD");
+}
+
+int
 pwm_git_commit(pwm_git_t *git, const char *msg) {
-  git_commit *last = NULL;
+  git_commit *head = NULL;
   git_oid oid;
   size_t n = 0;
   int err;
 
   if (!git_repository_is_empty(git->repo)) {
-    if (pwm_git_last_commit(git, &last) < 0) {
+    if (pwm_git_head(git, &head) < 0) {
+      fprintf(stderr, "pwm_git_commit: %s\n", giterr_last()->message);
       return -1;
     }
     n = 1;
   }
   err = git_commit_create_v(&oid, git->repo, "HEAD", git->sig, git->sig,
-                            NULL, msg, git->tree, n, last);
+                            NULL, msg, git->tree, n, head);
 
-  git_commit_free(last);
+  git_commit_free(head);
   return err;
 }
 
@@ -270,7 +266,8 @@ pwm_git_walk_log(pwm_git_t *git, pwm_git_walk_log_cb cb) {
     return 0;
   }
 
-  if (pwm_git_last_commit(git, &commit) < 0) {
+  if (pwm_git_head(git, &commit) < 0) {
+    fprintf(stderr, "pwm_git_walk_log: %s\n", giterr_last()->message);
     return -1;
   }
 
