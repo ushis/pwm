@@ -88,6 +88,70 @@ pwm_git_free(pwm_git_t *git) {
 }
 
 int
+pwm_git_clean(pwm_git_t *git) {
+  int err;
+  git_oid oid;
+  git_object *obj = NULL;
+  git_reset_t reset_type = GIT_RESET_HARD;
+  git_checkout_opts opts = GIT_CHECKOUT_OPTS_INIT;
+
+  if ((err = git_reference_name_to_id(&oid, git->repo, "HEAD")) < 0) {
+    goto cleanup;
+  }
+
+  if ((err = git_object_lookup(&obj, git->repo, &oid, GIT_OBJ_COMMIT)) < 0) {
+    goto cleanup;
+  }
+
+  if (git_repository_is_bare(git->repo)) {
+    reset_type = GIT_RESET_SOFT;
+  }
+
+  if ((err = git_reset(git->repo, obj, reset_type))  < 0) {
+    goto cleanup;
+  }
+
+  if (reset_type == GIT_RESET_HARD) {
+    opts.checkout_strategy = GIT_CHECKOUT_REMOVE_UNTRACKED;
+    err = git_checkout_head(git->repo, &opts);
+  }
+
+cleanup:
+  git_object_free(obj);
+  return err;
+}
+
+int
+pwm_git_get(pwm_git_t *git, const char *path, pwm_str_t *dst) {
+  const git_tree_entry *entry;
+  git_blob *blob = NULL;
+  int err;
+
+  if ((entry = git_tree_entry_byname(git->tree, path)) == NULL) {
+    fprintf(stderr, "pwm_git_entry_content: %s\n", giterr_last()->message);
+    return -1;
+  }
+
+  if ((err = git_tree_entry_to_object((git_object **) &blob, git->repo, entry)) < 0) {
+    fprintf(stderr, "pwm_git_entry_content: %s\n", giterr_last()->message);
+    goto cleanup;
+  }
+  err = pwm_str_set(dst, git_blob_rawcontent(blob), git_blob_rawsize(blob));
+
+cleanup:
+  git_blob_free(blob);
+  return err;
+}
+
+int
+pwm_git_has(pwm_git_t *git, const char *path) {
+  if (git_repository_is_empty(git->repo)) {
+    return 0;
+  }
+  return git_tree_entry_byname(git->tree, path) != NULL;
+}
+
+int
 pwm_git_add(pwm_git_t *git, const char *path, const pwm_str_t *s) {
   git_treebuilder *bld = NULL;
   git_oid oid;
@@ -176,70 +240,6 @@ pwm_git_commit(pwm_git_t *git, const char *msg) {
 
   git_commit_free(head);
   return err;
-}
-
-int
-pwm_git_clean(pwm_git_t *git) {
-  int err;
-  git_oid oid;
-  git_object *obj = NULL;
-  git_reset_t reset_type = GIT_RESET_HARD;
-  git_checkout_opts opts = GIT_CHECKOUT_OPTS_INIT;
-
-  if ((err = git_reference_name_to_id(&oid, git->repo, "HEAD")) < 0) {
-    goto cleanup;
-  }
-
-  if ((err = git_object_lookup(&obj, git->repo, &oid, GIT_OBJ_COMMIT)) < 0) {
-    goto cleanup;
-  }
-
-  if (git_repository_is_bare(git->repo)) {
-    reset_type = GIT_RESET_SOFT;
-  }
-
-  if ((err = git_reset(git->repo, obj, reset_type))  < 0) {
-    goto cleanup;
-  }
-
-  if (reset_type == GIT_RESET_HARD) {
-    opts.checkout_strategy = GIT_CHECKOUT_REMOVE_UNTRACKED;
-    err = git_checkout_head(git->repo, &opts);
-  }
-
-cleanup:
-  git_object_free(obj);
-  return err;
-}
-
-int
-pwm_git_entry_content(pwm_git_t *git, const char *path, pwm_str_t *dst) {
-  const git_tree_entry *entry;
-  git_blob *blob = NULL;
-  int err;
-
-  if ((entry = git_tree_entry_byname(git->tree, path)) == NULL) {
-    fprintf(stderr, "pwm_git_entry_content: %s\n", giterr_last()->message);
-    return -1;
-  }
-
-  if ((err = git_tree_entry_to_object((git_object **) &blob, git->repo, entry)) < 0) {
-    fprintf(stderr, "pwm_git_entry_content: %s\n", giterr_last()->message);
-    goto cleanup;
-  }
-  err = pwm_str_set(dst, git_blob_rawcontent(blob), git_blob_rawsize(blob));
-
-cleanup:
-  git_blob_free(blob);
-  return err;
-}
-
-int
-pwm_git_entry_exists(pwm_git_t *git, const char *path) {
-  if (git_repository_is_empty(git->repo)) {
-    return 0;
-  }
-  return git_tree_entry_byname(git->tree, path) != NULL;
 }
 
 int

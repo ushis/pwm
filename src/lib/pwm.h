@@ -12,7 +12,7 @@
 /* finds the pwm home directory */
 int pwm_find_home(pwm_str_t *s);
 
-/* */
+/* reads a line without echoing the inserted characters */
 int pwm_read_line_hidden(pwm_str_t *s, const char *prompt);
 
 #endif /* PWM_H */

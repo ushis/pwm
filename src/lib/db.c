@@ -44,7 +44,7 @@ pwm_db_clean(pwm_db_t *db) {
 
 int
 pwm_db_get(pwm_db_t *db, const char *key, pwm_str_t *dst) {
-  if (pwm_git_entry_content(db->git, key, dst) < 0) {
+  if (pwm_git_get(db->git, key, dst) < 0) {
     return -1;
   }
   return pwm_gpg_decrypt(db->gpg, dst);
@@ -52,7 +52,7 @@ pwm_db_get(pwm_db_t *db, const char *key, pwm_str_t *dst) {
 
 int
 pwm_db_has(pwm_db_t *db, const char *key) {
-  return pwm_git_entry_exists(db->git, key);
+  return pwm_git_has(db->git, key);
 }
 
 int
