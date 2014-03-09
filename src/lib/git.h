@@ -12,7 +12,7 @@ typedef struct {
 } pwm_git_t;
 
 /* */
-pwm_git_t *pwm_git_new(const char *path);
+int pwm_git_new(pwm_git_t **out, const char *path);
 
 /* */
 void pwm_git_free(pwm_git_t *git);

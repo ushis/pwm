@@ -12,11 +12,8 @@ typedef struct {
   pwm_gpg_t *gpg;
 } pwm_db_t;
 
-/* inits a database */
-int pwm_db_init(pwm_db_t *db, pwm_str_t *home, const char *email);
-
 /* allocates a new database */
-pwm_db_t *pwm_db_new(pwm_str_t *home, const char *email);
+int pwm_db_new(pwm_db_t **out, pwm_str_t *home, const char *email);
 
 /* frees a database */
 void pwm_db_free(pwm_db_t *db);

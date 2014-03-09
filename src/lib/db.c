@@ -3,8 +3,8 @@
 #include <string.h>
 #include "db.h"
 
-pwm_db_t *
-pwm_db_new(pwm_str_t *home, const char *email) {
+int
+pwm_db_new(pwm_db_t **out, pwm_str_t *home, const char *email) {
   pwm_db_t *db;
 
   if ((db = (pwm_db_t *) calloc(1, sizeof(pwm_db_t))) == NULL) {
@@ -13,18 +13,19 @@ pwm_db_new(pwm_str_t *home, const char *email) {
   }
   db->home = home;
 
-  if ((db->git = pwm_git_new(home->buf)) == NULL) {
+  if (pwm_git_new(&db->git, home->buf) < 0) {
     goto fail;
   }
 
-  if ((db->gpg = pwm_gpg_new(email)) == NULL) {
+  if (pwm_gpg_new(&db->gpg, email) < 0) {
     goto fail;
   }
-  return db;
+  *out = db;
+  return 0;
 
 fail:
   pwm_db_free(db);
-  return NULL;
+  return -1;
 }
 
 void

@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include "gpg.h"
 
-pwm_gpg_t *
-pwm_gpg_new(const char *email) {
+int
+pwm_gpg_new(pwm_gpg_t **out, const char *email) {
   gpgme_error_t err;
   pwm_gpg_t *gpg;
 
@@ -29,11 +29,12 @@ pwm_gpg_new(const char *email) {
     goto fail;
   }
   gpg->keys[1] = NULL;
-  return gpg;
+  *out = gpg;
+  return 0;
 
 fail:
   pwm_gpg_free(gpg);
-  return NULL;
+  return -1;
 }
 
 void

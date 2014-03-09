@@ -11,7 +11,7 @@ typedef struct {
 } pwm_gpg_t;
 
 /* allocates a new gpg handler */
-pwm_gpg_t *pwm_gpg_new(const char *email);
+int pwm_gpg_new(pwm_gpg_t **out, const char *email);
 
 /* frees the gpg handler */
 void pwm_gpg_free(pwm_gpg_t *gpg);

@@ -40,8 +40,8 @@ pwm_git_open(pwm_git_t *git, const char *path) {
   return 0;
 }
 
-pwm_git_t *
-pwm_git_new(const char *path) {
+int
+pwm_git_new(pwm_git_t **out, const char *path) {
   pwm_git_t *git;
 
   git_threads_init();
@@ -61,18 +61,20 @@ pwm_git_new(const char *path) {
   }
 
   if (git_repository_is_empty(git->repo)) {
-    return git;
+    *out = git;
+    return 0;
   }
 
   if (git_revparse_single((git_object **) &git->tree, git->repo, "HEAD^{tree}") < 0) {
     fprintf(stderr, "pwm_git_new: %s\n", giterr_last()->message);
     goto fail;
   }
-  return git;
+  *out = git;
+  return 0;
 
 fail:
   pwm_git_free(git);
-  return NULL;
+  return -1;
 }
 
 void
