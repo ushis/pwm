@@ -11,7 +11,7 @@
 
 #define arr_size(arr) (sizeof(arr)/sizeof(arr[0]))
 
-const char *pwm_path[] = {".", "/usr/local/lib/pwm", "/usr/lib/pwm", NULL};
+const char *pwm_path[] = {"./builtin", "/usr/local/lib/pwm", "/usr/lib/pwm", NULL};
 
 typedef struct {
   char *cmd;

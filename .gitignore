@@ -2,6 +2,10 @@
 *.swo
 *.swp
 
+# tmp
+*.o
+*.a
+
 # bin
 pwm
 pwm-del

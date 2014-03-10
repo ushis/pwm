@@ -1,18 +1,35 @@
-SRC := $(shell find src/lib -name '*.c')
-BIN := pwm-del pwm-gen pwm-get pwm-list pwm-log pwm-set
-PWM := pwm
+LIBSRC := $(wildcard lib/*.c)
+LIBOBJ := $(patsubst %.c,%.o,$(LIBSRC))
+LIBARC := lib/pwm.a
 
-CFLAGS += -Wall -Isrc/lib -lgpgme -lgit2 -D_GNU_SOURCE
+BUILTINSRC := $(wildcard builtin/*.c)
+BUILTINOBJ := $(patsubst %.c,%.o,$(BUILTINSRC))
+BUILTINBIN := $(patsubst %.o,%,$(BUILTINOBJ))
+
+SRC := pwm.c
+BIN := $(patsubst %.c,%,$(SRC))
+
+CFLAGS += -std=c99 -Wall -O2 -D_GNU_SOURCE -Ilib
+LDFLAGS += -lgpgme -lgit2
 
 .PHONY: all
-all: $(PWM) $(BIN)
+all: $(BIN) $(BUILTINBIN)
 
-$(PWM): src/pwm.c
-	$(CC) $(CFLAGS) $^ -o $@
+$(BIN): $(SRC)
+	$(CC) $(CFLAGS) -o $@ $^
 
-%: src/%.c $(SRC)
-	$(CC) $(CFLAGS) $^ -o $@
+$(BUILTINBIN): %: %.o $(LIBARC)
+	$(CC) $(LDFLAGS) -o $@ $^
+
+$(BUILTINOBJ): %.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $^
+
+$(LIBARC): $(LIBOBJ)
+	$(AR) csr $@ $^
+
+$(LIBOBJ): %.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $^
 
 .PHONY: clean
 clean:
-	rm -f $(PWM) $(BIN)
+	rm -f $(LIBOBJ) $(LIBARC) $(BUILTINOBJ) $(BUILTINBIN) $(BIN)
