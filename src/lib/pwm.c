@@ -1,8 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <sys/mman.h>
+#include <sys/resource.h>
 #include <termios.h>
+#include <string.h>
 #include "pwm.h"
+
+void
+pwm_init() {
+  struct rlimit zero = {0, 0};
+
+  /* lock all memory */
+  if (mlockall(MCL_FUTURE) < 0) {
+    perror("mlockall");
+    exit(EXIT_FAILURE);
+  }
+
+  /* disable coredumps */
+  if (prlimit(0, RLIMIT_CORE, &zero, NULL) < 0) {
+    perror("prlimit");
+    exit(EXIT_FAILURE);
+  }
+}
 
 int
 pwm_find_home(pwm_str_t *s) {

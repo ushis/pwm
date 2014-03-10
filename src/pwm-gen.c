@@ -73,6 +73,8 @@ main(int argc, char **argv) {
   pwm_str_t buf = PWM_STR_INIT;
   const pwm_gen_t *gen;
 
+  pwm_init();
+
   if ((i = parse_opts(&opts, argc, argv)) >= argc) {
     usage(argv[0]);
   }

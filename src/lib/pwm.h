@@ -9,6 +9,9 @@
 #include "gen.h"
 #include "db.h"
 
+/* */
+void pwm_init();
+
 /* finds the pwm home directory */
 int pwm_find_home(pwm_str_t *s);
 

@@ -8,6 +8,8 @@ main(int argc, char **argv) {
   pwm_db_t *db = NULL;
   pwm_str_t buf = PWM_STR_INIT;
 
+  pwm_init();
+
   if (argc < 2) {
     fprintf(stderr, "usage: %s [-c] <key>\n", argv[0]);
     return 1;

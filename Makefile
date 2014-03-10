@@ -2,7 +2,7 @@ SRC := $(shell find src/lib -name '*.c')
 BIN := pwm-del pwm-gen pwm-get pwm-list pwm-log pwm-set
 PWM := pwm
 
-CFLAGS += -Wall -Isrc/lib -lgpgme -lgit2
+CFLAGS += -Wall -Isrc/lib -lgpgme -lgit2 -D_GNU_SOURCE
 
 .PHONY: all
 all: $(PWM) $(BIN)

@@ -25,6 +25,8 @@ main(int argc, char **argv) {
   pwm_db_t *db = NULL;
   pwm_str_t buf = PWM_STR_INIT;
 
+  pwm_init();
+
   if ((err = pwm_find_home(&buf)) < 0) {
     fprintf(stderr, "couldn't find the pwm buf dir\n");
     goto cleanup;
