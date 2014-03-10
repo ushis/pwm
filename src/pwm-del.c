@@ -22,13 +22,13 @@ main(int argc, char **argv) {
   }
 
   if (!pwm_db_has(db, argv[1])) {
-    fprintf(stderr, "couldn't find your `%s` password\n", argv[1]);
+    fprintf(stderr, "couldn't find your %s password\n", argv[1]);
     err = -1;
     goto cleanup;
   }
 
   if ((err = pwm_db_del(db, argv[1])) >= 0) {
-    fprintf(stderr, "deleted your `%s` password\n", argv[1]);
+    fprintf(stderr, "deleted your %s password\n", argv[1]);
   }
   pwm_db_clean(db);
 

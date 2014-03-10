@@ -27,7 +27,7 @@ int pwm_db_get(pwm_db_t *db, const char *key, pwm_str_t *dst);
 int pwm_db_has(pwm_db_t *db, const char *key);
 
 /* set a database entry s */
-int pwm_db_set(pwm_db_t *db, const char *key, pwm_str_t *src);
+int pwm_db_set(pwm_db_t *db, const char *key, const pwm_str_t *src);
 
 /* deletes a database entry */
 int pwm_db_del(pwm_db_t *db, const char *key);

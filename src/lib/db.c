@@ -43,10 +43,17 @@ pwm_db_clean(pwm_db_t *db) {
 
 int
 pwm_db_get(pwm_db_t *db, const char *key, pwm_str_t *dst) {
-  if (pwm_git_get(db->git, key, dst) < 0) {
-    return -1;
+  pwm_str_t src = PWM_STR_INIT;
+  int err;
+
+  if ((err = pwm_git_get(db->git, key, &src)) >= 0) {
+    goto cleanup;
   }
-  return pwm_gpg_decrypt(db->gpg, dst);
+  err = pwm_gpg_decrypt(db->gpg, dst, &src);
+
+cleanup:
+  pwm_str_free(&src);
+  return err;
 }
 
 int
@@ -55,18 +62,24 @@ pwm_db_has(pwm_db_t *db, const char *key) {
 }
 
 int
-pwm_db_set(pwm_db_t *db, const char *key, pwm_str_t *src) {
+pwm_db_set(pwm_db_t *db, const char *key, const pwm_str_t *src) {
+  pwm_str_t dst = PWM_STR_INIT;
   char msg[strlen(key)+3];
+  int err;
 
-  if (pwm_gpg_encrypt(db->gpg, src) < 0) {
-    return -1;
+  if ((err = pwm_gpg_encrypt(db->gpg, &dst, src)) < 0) {
+    goto cleanup;
   }
 
-  if (pwm_git_add(db->git, key, src) < 0) {
-    return -1;
+  if ((err = pwm_git_add(db->git, key, &dst)) < 0) {
+    goto cleanup;
   }
   sprintf(msg, "+ %s", key);
-  return pwm_git_commit(db->git, msg);
+  err = pwm_git_commit(db->git, msg);
+
+cleanup:
+  pwm_str_free(&dst);
+  return err;
 }
 
 int

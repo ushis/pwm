@@ -47,14 +47,14 @@ pwm_gpg_free(pwm_gpg_t *gpg) {
 }
 
 int
-pwm_gpg_decrypt(pwm_gpg_t *gpg, pwm_str_t *s) {
+pwm_gpg_decrypt(pwm_gpg_t *gpg, pwm_str_t *dst, const pwm_str_t *src) {
   gpgme_data_t cipher = NULL, plain = NULL;
   gpgme_error_t err;
   size_t len;
   char *buf = NULL;
   int rc = -1;
 
-  if ((err = gpgme_data_new_from_mem(&cipher, s->buf, s->len, 1)) > 0) {
+  if ((err = gpgme_data_new_from_mem(&cipher, src->buf, src->len, 0)) > 0) {
     fprintf(stderr, "pwm_gpg_decrypt: %s\n", gpgme_strerror(err));
     goto cleanup;
   }
@@ -74,7 +74,7 @@ pwm_gpg_decrypt(pwm_gpg_t *gpg, pwm_str_t *s) {
     perror("pwm_gpg_decrypt");
     goto cleanup;
   }
-  rc = pwm_str_set(s, buf, len);
+  rc = pwm_str_set(dst, buf, len);
 
 cleanup:
   gpgme_data_release(cipher);
@@ -83,14 +83,14 @@ cleanup:
 }
 
 int
-pwm_gpg_encrypt(pwm_gpg_t *gpg, pwm_str_t *s) {
+pwm_gpg_encrypt(pwm_gpg_t *gpg, pwm_str_t *dst, const pwm_str_t *src) {
   gpgme_data_t cipher = NULL, plain = NULL;
   gpgme_error_t err;
   size_t len;
   char *buf = NULL;
   int rc = -1;
 
-  if ((err = gpgme_data_new_from_mem(&plain, s->buf, s->len, 1)) > 0) {
+  if ((err = gpgme_data_new_from_mem(&plain, src->buf, src->len, 0)) > 0) {
     fprintf(stderr, "pwm_gpg_encrypt: %s\n", gpgme_strerror(err));
     goto cleanup;
   }
@@ -110,7 +110,7 @@ pwm_gpg_encrypt(pwm_gpg_t *gpg, pwm_str_t *s) {
     perror("pwm_gpg_encrypt");
     goto cleanup;
   }
-  rc = pwm_str_set(s, buf, len);
+  rc = pwm_str_set(dst, buf, len);
 
 cleanup:
   gpgme_data_release(plain);

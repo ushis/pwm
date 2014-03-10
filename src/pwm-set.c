@@ -23,7 +23,7 @@ main(int argc, char **argv) {
   }
 
   if (pwm_db_has(db, argv[1])) {
-    fprintf(stderr, "password for `%s` already exists\n", argv[1]);
+    fprintf(stderr, "password for %s already exists\n", argv[1]);
     err = -1;
     goto cleanup;
   }
@@ -33,7 +33,7 @@ main(int argc, char **argv) {
   }
 
   if ((err = pwm_db_set(db, argv[1], &passwd)) >= 0) {
-    fprintf(stderr, "\rsaved your `%s` password\n", argv[1]);
+    fprintf(stderr, "\rsaved your %s password\n", argv[1]);
   }
   pwm_db_clean(db);
 
