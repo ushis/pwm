@@ -46,7 +46,7 @@ pwm_db_get(pwm_db_t *db, const char *key, pwm_str_t *dst) {
   pwm_str_t src = PWM_STR_INIT;
   int err;
 
-  if ((err = pwm_git_get(db->git, key, &src)) >= 0) {
+  if ((err = pwm_git_get(db->git, key, &src)) < 0) {
     goto cleanup;
   }
   err = pwm_gpg_decrypt(db->gpg, dst, &src);

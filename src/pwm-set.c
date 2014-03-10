@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "pwm.h"
 
 int
 main(int argc, char **argv) {
   int err;
   pwm_db_t *db = NULL;
-  pwm_str_t buf = PWM_STR_INIT, passwd = PWM_STR_INIT;
+  pwm_str_t buf = PWM_STR_INIT;
 
   if (argc < 2) {
     fprintf(stderr, "usage: %s [-f] <key>\n", argv[0]);
@@ -28,11 +29,17 @@ main(int argc, char **argv) {
     goto cleanup;
   }
 
-  if ((err = pwm_read_line_hidden(&passwd, "insert your password: ")) < 0) {
+  if (isatty(STDIN_FILENO)) {
+    err = pwm_read_line_hidden(&buf, "insert your password: ");
+  } else {
+    err = pwm_str_read_line(&buf, stdin);
+  }
+
+  if (err < 0) {
     goto cleanup;
   }
 
-  if ((err = pwm_db_set(db, argv[1], &passwd)) >= 0) {
+  if ((err = pwm_db_set(db, argv[1], &buf)) >= 0) {
     fprintf(stderr, "\rsaved your %s password\n", argv[1]);
   }
   pwm_db_clean(db);
@@ -40,6 +47,5 @@ main(int argc, char **argv) {
 cleanup:
   pwm_db_free(db);
   pwm_str_free(&buf);
-  pwm_str_free(&passwd);
   return err < 0;
 }

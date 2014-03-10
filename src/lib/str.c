@@ -89,13 +89,9 @@ pwm_str_read_line(pwm_str_t *s, FILE *stream) {
   char c;
   size_t i = 0;
 
-  while ((c = fgetc(stream)) != EOF) {
+  while ((c = fgetc(stream)) != EOF && c != '\n') {
     if (c == '\r') {
       continue;
-    }
-
-    if (c == '\n') {
-      break;
     }
 
     if (i >= s->cap && pwm_str_resize(s, (2*s->cap)+1) < 0) {
