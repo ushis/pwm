@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -71,10 +72,10 @@ cmd_exec(cmd_t *cmd, char **argv) {
     argv[0] = cmd->bin;
     execv(cmd->path, argv);
     perror("execv");
-    return 1;
+    exit(EXIT_FAILURE);
   }
   waitpid(pid, &rc, 0);
-  return WEXITSTATUS(rc);
+  return WIFEXITED(rc) ? WEXITSTATUS(rc) : 1;
 }
 
 void

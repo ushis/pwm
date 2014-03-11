@@ -5,7 +5,7 @@
 const char *usage_str =
   "pwm-get [<opts>] <key>\n\n"
   "options:\n"
-  "  -c              store the password in the clipboard (not implemented)\n"
+  "  -c              store the password in the clipboard\n"
   "  -h              show this help";
 
 void
@@ -44,7 +44,12 @@ run(opts_t *opts, const char *key) {
   if ((err = pwm_db_get(db, key, &buf)) < 0) {
     goto cleanup;
   }
-  fprintf(stdout, "%s\n", buf.buf);
+
+  if (!opts->clip) {
+    err = pwm_clip_set(&buf);
+  } else {
+    fprintf(stdout, "%s\n", buf.buf);
+  }
 
 cleanup:
   pwm_db_free(db);

@@ -7,7 +7,7 @@
 const char *usage_str =
   "pwm-gen [<opts>] <key>\n\n"
   "options:\n"
-  "  -c              store password in the clipboard (not implemented)\n"
+  "  -c              store password in the clipboard\n"
   "  -f              override existing password\n"
   "  -g <generator>  generator to use (default: alnum)\n"
   "  -h              show this help\n"
@@ -75,8 +75,17 @@ run(opts_t *opts, const char *key) {
     goto cleanup;
   }
 
-  if (opts->print) {
-    fprintf(stderr, "%s\n", buf.buf);
+  if (!opts->clip) {
+    if (opts->print) {
+      fprintf(stderr, "%s\n", buf.buf);
+    } else {
+      fprintf(stderr, "generated your %s password\n", key);
+    }
+    goto cleanup;
+  }
+
+  if ((err = pwm_clip_set(&buf)) >= 0) {
+    fprintf(stderr, "stored your generated %s password in the clipboard\n", key);
   } else {
     fprintf(stderr, "generated your %s password\n", key);
   }

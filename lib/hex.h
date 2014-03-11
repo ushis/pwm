@@ -13,4 +13,4 @@ size_t pwm_hex_encode(char *dst, const char *src, size_t len);
 /* decodes a hex src to raw bytes and writes to dst */
 ssize_t pwm_hex_decode(char *dst, const char *src, size_t len);
 
-#endif /* PWM_HEX_H */
+#endif /* HEX_H */

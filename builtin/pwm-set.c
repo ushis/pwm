@@ -7,7 +7,7 @@
 const char *usage_str =
   "pwm-set [<opts>] <key>\n\n"
   "options:\n"
-  "  -c              store password in the clipboard (not implemented)\n"
+  "  -c              store password in the clipboard\n"
   "  -f              override existing password\n"
   "  -h              show this help\n"
   "  -p              print password";
@@ -63,6 +63,10 @@ run(opts_t *opts, const char *key) {
     fprintf(stderr, "\rsaved your %s password\n", key);
   }
   pwm_db_clean(db);
+
+  if ((err = pwm_clip_set(&buf)) >= 0) {
+    fprintf(stderr, "stored your %s password in the clipboard\n", key);
+  }
 
 cleanup:
   pwm_db_free(db);

@@ -8,6 +8,7 @@
 #include "str.h"
 #include "gen.h"
 #include "db.h"
+#include "clip.h"
 
 /* */
 void pwm_init();
