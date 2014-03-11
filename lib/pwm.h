@@ -12,6 +12,9 @@
 /* */
 void pwm_init();
 
+/*  */
+void pwm_shutdown();
+
 /* finds the pwm home directory */
 int pwm_find_home(pwm_str_t *s);
 

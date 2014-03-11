@@ -3,11 +3,14 @@
 #include "gpg.h"
 
 int
+pwm_gpg_init() {
+  return (gpgme_check_version(NULL) == NULL) ? -1 : 0;
+}
+
+int
 pwm_gpg_new(pwm_gpg_t **out, const char *email) {
   gpgme_error_t err;
   pwm_gpg_t *gpg;
-
-  gpgme_check_version(NULL);
 
   if ((gpg = (pwm_gpg_t *) calloc(1, sizeof(pwm_gpg_t))) == NULL) {
     perror("pwm_gpg_new: calloc");

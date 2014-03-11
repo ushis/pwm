@@ -11,6 +11,12 @@ typedef struct {
   git_tree *tree;
 } pwm_git_t;
 
+/* inits git */
+int pwm_git_init();
+
+/* shutdown git */
+void pwm_git_shutdown();
+
 /* allocates a new git handler */
 int pwm_git_new(pwm_git_t **out, const char *path);
 

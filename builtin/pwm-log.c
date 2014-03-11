@@ -40,5 +40,6 @@ main(int argc, char **argv) {
 cleanup:
   pwm_db_free(db);
   pwm_str_free(&buf);
+  pwm_shutdown();
   return err < 0;
 }

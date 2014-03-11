@@ -8,12 +8,11 @@ main(int argc, char **argv) {
   pwm_db_t *db = NULL;
   pwm_str_t buf = PWM_STR_INIT;
 
-  pwm_init();
-
   if (argc < 2) {
     fprintf(stderr, "usage: %s [-c] <key>\n", argv[0]);
     return 1;
   }
+  pwm_init();
 
   if ((err = pwm_find_home(&buf)) < 0) {
     fprintf(stderr, "couldn't find the pwm home dir\n");
@@ -38,5 +37,6 @@ main(int argc, char **argv) {
 cleanup:
   pwm_db_free(db);
   pwm_str_free(&buf);
+  pwm_shutdown();
   return err < 0;
 }

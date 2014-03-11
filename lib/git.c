@@ -7,6 +7,16 @@
 #include "git.h"
 
 int
+pwm_git_init() {
+  return git_threads_init();
+}
+
+void
+pwm_git_shutdown() {
+  git_threads_shutdown();
+}
+
+int
 pwm_git_open(pwm_git_t *git, const char *path) {
   struct stat info;
 
@@ -43,8 +53,6 @@ pwm_git_open(pwm_git_t *git, const char *path) {
 int
 pwm_git_new(pwm_git_t **out, const char *path) {
   pwm_git_t *git;
-
-  git_threads_init();
 
   if ((git = (pwm_git_t *) calloc(1, sizeof(pwm_git_t))) == NULL) {
     perror("calloc");

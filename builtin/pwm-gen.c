@@ -73,8 +73,6 @@ main(int argc, char **argv) {
   pwm_str_t buf = PWM_STR_INIT;
   const pwm_gen_t *gen;
 
-  pwm_init();
-
   if ((i = parse_opts(&opts, argc, argv)) >= argc) {
     usage(argv[0]);
   }
@@ -84,6 +82,7 @@ main(int argc, char **argv) {
     fprintf(stderr, "invalid password length: %ld\n", opts.len);
     exit(EXIT_FAILURE);
   }
+  pwm_init();
 
   if ((err = pwm_find_home(&buf)) < 0) {
     fprintf(stderr, "couldn't find the pwm home dir\n");
@@ -125,5 +124,6 @@ main(int argc, char **argv) {
 cleanup:
   pwm_db_free(db);
   pwm_str_free(&buf);
+  pwm_shutdown();
   exit(err < 0);
 }

@@ -5,6 +5,8 @@
 #include <termios.h>
 #include <string.h>
 #include "pwm.h"
+#include "git.h"
+#include "gpg.h"
 
 void
 pwm_init() {
@@ -21,6 +23,21 @@ pwm_init() {
     perror("prlimit");
     exit(EXIT_FAILURE);
   }
+
+  if (pwm_git_init() < 0) {
+    fprintf(stderr, "git initialization failed\n");
+    exit(EXIT_FAILURE);
+  }
+
+  if (pwm_gpg_init() < 0) {
+    fprintf(stderr, "gpg initialization failed\n");
+    exit(EXIT_FAILURE);
+  }
+}
+
+void
+pwm_shutdown() {
+  pwm_git_shutdown();
 }
 
 int

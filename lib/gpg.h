@@ -10,6 +10,9 @@ typedef struct {
   gpgme_key_t keys[2];
 } pwm_gpg_t;
 
+/* inits gpg */
+int pwm_gpg_init();
+
 /* allocates a new gpg handler */
 int pwm_gpg_new(pwm_gpg_t **out, const char *email);
 
