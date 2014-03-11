@@ -2,7 +2,6 @@
 #include <string.h>
 #include "str.h"
 #include "hex.h"
-#include "util.h"
 
 int
 pwm_str_resize(pwm_str_t *s, size_t cap) {
@@ -78,9 +77,14 @@ pwm_str_shrink(pwm_str_t *s, size_t n) {
   }
 }
 
+size_t
+pwm_str_min_len(pwm_str_t *a, pwm_str_t *b) {
+  return (a->len < b->len) ? a->len : b->len;
+}
+
 int
 pwm_str_cmp(pwm_str_t *a, pwm_str_t *b) {
-  int rc = memcmp(a->buf, b->buf, min(a->len, b->len));
+  int rc = memcmp(a->buf, b->buf, pwm_str_min_len(a, b));
   return (rc == 0) ? (a->len - b->len) : rc;
 }
 
