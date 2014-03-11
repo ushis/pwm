@@ -63,6 +63,12 @@ pwm_find_home(pwm_str_t *s) {
 }
 
 int
+pwm_read_line(pwm_str_t *s, const char *prompt) {
+  fputs(prompt, stdout);
+  return pwm_str_read_line(s, stdin);
+}
+
+int
 pwm_read_line_hidden(pwm_str_t *s, const char *prompt) {
   struct termios old_attr, new_attr;
   int err;
@@ -78,8 +84,7 @@ pwm_read_line_hidden(pwm_str_t *s, const char *prompt) {
     perror("pwm_read_line: tcgetattr");
     return -1;
   }
-  fprintf(stdout, "%s", prompt);
-  err = pwm_str_read_line(s, stdin);
+  err = pwm_read_line(s, prompt);
   tcsetattr(0, TCSAFLUSH, &old_attr);
   return err;
 }
