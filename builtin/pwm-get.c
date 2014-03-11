@@ -46,9 +46,12 @@ run(opts_t *opts, const char *key) {
   }
 
   if (!opts->clip) {
-    err = pwm_clip_set(&buf);
-  } else {
     fprintf(stdout, "%s\n", buf.buf);
+    goto cleanup;
+  }
+
+  if ((err = pwm_clip_set(&buf)) >= 0) {
+    fprintf(stderr, "stored you %s password in the clipboard\n", key);
   }
 
 cleanup:
