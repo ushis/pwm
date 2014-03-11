@@ -2,65 +2,55 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <libgen.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include "config.h"
 
-#ifndef PATH_MAX
-#define PATH_MAX (4<<10)
-#endif
-
-#define arr_size(arr) (sizeof(arr)/sizeof(arr[0]))
-
-const char *pwm_path[] = {"./builtin", "/usr/local/lib/pwm", "/usr/lib/pwm", NULL};
+const char *usage_str = "pwm <cmd> [<args>]";
 
 typedef struct {
   char *cmd;
   char *bin;
   char *help;
-  char path[PATH_MAX];
 } cmd_t;
 
-cmd_t pwm_cmds[] = {
-  {"del", "pwm-del", "delete a password"},
-  {"gen", "pwm-gen", "generate a password"},
-  {"get", "pwm-get", "retrieve a password"},
-  {"list", "pwm-list", "list all passwords"},
-  {"log", "pwm-log", "print the log"},
-  {"set", "pwm-set", "set a password"}
+const cmd_t cmds[] = {
+  {"del",  PWM_EXEC_DIR"/pwm-del",  "delete a password"},
+  {"gen",  PWM_EXEC_DIR"/pwm-gen",  "generate a password"},
+  {"get",  PWM_EXEC_DIR"/pwm-get",  "retrieve a password"},
+  {"list", PWM_EXEC_DIR"/pwm-list", "list all passwords"},
+  {"log",  PWM_EXEC_DIR"/pwm-log",  "print the log"},
+  {"set",  PWM_EXEC_DIR"/pwm-set",  "set a password"}
 };
 
-cmd_t *
-cmd_get(const char *cmd) {
+void
+usage() {
   int i;
 
-  for (i = 0; i < arr_size(pwm_cmds); i++) {
-    if (strcmp(cmd, pwm_cmds[i].cmd) == 0) {
-      return &pwm_cmds[i];
+  fprintf(stderr, "usage: %s\n\ncommands:\n", usage_str);
+
+  for (i = 0; i < (sizeof(cmds)/sizeof(cmd_t)); i++) {
+    fprintf(stderr, "  %-14s  %s\n", cmds[i].cmd, cmds[i].help);
+  }
+  exit(EXIT_FAILURE);
+}
+
+const cmd_t *
+cmd_find(const char *cmd) {
+  int i;
+
+  for (i = 0; i < (sizeof(cmds)/sizeof(cmd_t)); i++) {
+    if (strcmp(cmd, cmds[i].cmd) == 0) {
+      return &cmds[i];
     }
   }
   return NULL;
 }
 
 int
-cmd_find(cmd_t *cmd) {
-  struct stat info;
-  int i;
-
-  for (i = 0; pwm_path[i] != NULL; i++) {
-    snprintf(cmd->path, PATH_MAX, "%s/%s", pwm_path[i], cmd->bin);
-
-    if (stat(cmd->path, &info) == 0 &&
-        S_ISREG(info.st_mode) &&
-        access(cmd->path, X_OK) == 0) {
-      return 0;
-    }
-  }
-  return -1;
-}
-
-int
-cmd_exec(cmd_t *cmd, char **argv) {
+cmd_exec(const cmd_t *cmd, char **argv) {
   int pid, rc;
 
   if ((pid = fork()) < 0) {
@@ -69,8 +59,8 @@ cmd_exec(cmd_t *cmd, char **argv) {
   }
 
   if (pid == 0) {
-    argv[0] = cmd->bin;
-    execv(cmd->path, argv);
+    argv[0] = basename(cmd->bin);
+    execv(cmd->bin, argv);
     perror("execv");
     exit(EXIT_FAILURE);
   }
@@ -78,34 +68,16 @@ cmd_exec(cmd_t *cmd, char **argv) {
   return WIFEXITED(rc) ? WEXITSTATUS(rc) : 1;
 }
 
-void
-usage(const char *argv0) {
-  int i;
-
-  fprintf(stderr, "usage: %s <cmd> [<args>]\n\ncommands:\n", argv0);
-
-  for (i = 0; i < arr_size(pwm_cmds); i++) {
-    fprintf(stderr, "  %-4s  %s\n", pwm_cmds[i].cmd, pwm_cmds[i].help);
-  }
-}
-
 int
 main(int argc, char **argv) {
-  cmd_t *cmd;
+  const cmd_t *cmd;
 
   if (argc < 2) {
-    usage(argv[0]);
-    return 1;
+    usage();
   }
 
-  if ((cmd = cmd_get(argv[1])) == NULL) {
-    usage(argv[0]);
-    return 1;
-  }
-
-  if (cmd_find(cmd) < 0) {
-    fprintf(stderr, "could not locate the executable: %s\n", cmd->bin);
-    return 1;
+  if ((cmd = cmd_find(argv[1])) == NULL) {
+    usage();
   }
   return cmd_exec(cmd, &argv[1]);
 }

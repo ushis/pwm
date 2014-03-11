@@ -5,6 +5,12 @@
 # tmp
 *.o
 *.a
+*.log
+*.status
+/Makefile
+/config.h
+/configure
+/autom4te.cache
 
 # bin
 pwm
