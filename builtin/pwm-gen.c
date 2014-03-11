@@ -41,7 +41,7 @@ int
 run(opts_t *opts, const char *key) {
   int err;
   pwm_db_t *db = NULL;
-  pwm_str_t buf = PWM_STR_INIT;
+  PWM_STR_INIT(buf);
   const pwm_gen_t *gen;
 
   if ((err = pwm_find_home(&buf)) < 0) {

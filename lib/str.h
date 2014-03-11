@@ -10,7 +10,7 @@ typedef struct {
   size_t cap;
 } pwm_str_t;
 
-#define PWM_STR_INIT {NULL,0,0}
+#define PWM_STR_INIT(s) pwm_str_t s = {NULL,0,0}
 
 /* resizes the string buffer */
 int pwm_str_resize(pwm_str_t *s, size_t n);

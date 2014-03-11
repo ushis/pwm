@@ -22,7 +22,7 @@ int
 run() {
   int err;
   pwm_db_t *db = NULL;
-  pwm_str_t buf = PWM_STR_INIT;
+  PWM_STR_INIT(buf);
 
   if ((err = pwm_find_home(&buf)) < 0) {
     fprintf(stderr, "couldn't find the pwm home dir\n");

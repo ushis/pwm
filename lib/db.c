@@ -43,7 +43,7 @@ pwm_db_clean(pwm_db_t *db) {
 
 int
 pwm_db_get(pwm_db_t *db, const char *key, pwm_str_t *dst) {
-  pwm_str_t src = PWM_STR_INIT;
+  PWM_STR_INIT(src);
   int err;
 
   if ((err = pwm_git_get(db->git, key, &src)) < 0) {
@@ -63,7 +63,7 @@ pwm_db_has(pwm_db_t *db, const char *key) {
 
 int
 pwm_db_set(pwm_db_t *db, const char *key, const pwm_str_t *src) {
-  pwm_str_t dst = PWM_STR_INIT;
+  PWM_STR_INIT(dst);
   char msg[strlen(key)+3];
   int err;
 
