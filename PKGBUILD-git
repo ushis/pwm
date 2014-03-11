@@ -1,0 +1,31 @@
+# Maintainer: ushi <ushi+arch@honkgong.info>
+pkgname=pwm-git
+pkgver='0.0.0'
+pkgrel=1
+pkgdesc="git/gpg based password manager"
+arch=('i686' 'x86_64')
+url="git.honkgong.info/ushi/pwm"
+license=('GPL')
+depends=('libgit2' 'gpgme')
+optdepends=('xclip: clipboard support')
+provides=('pwm')
+conflicts=('pwm')
+source=('pwm::git+https://git.honkgong.info/ushi/pwm.git#branch=master')
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}/pwm"
+  echo "$(git rev-list --count master).$(git rev-parse --short master)"
+}
+
+build() {
+  cd "${srcdir}/pwm"
+	autoconf -o configure configure.ac
+  ./configure --prefix=/usr --with-pwmexecdir=/usr/lib/pwm
+	make
+}
+
+package() {
+  cd "${srcdir}/pwm"
+	make DESTDIR="${pkgdir}" install
+}

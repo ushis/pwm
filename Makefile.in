@@ -9,7 +9,7 @@ BUILTINBIN := $(patsubst %.o,%,$(BUILTINOBJ))
 SRC := pwm.c
 BIN := $(patsubst %.c,%,$(SRC))
 
-BINDIR     := @bindir@
+BINDIR     := @prefix@/bin
 PWMEXECDIR := @pwmexecdir@
 
 CFLAGS += -std=c99 -Wall -O2 -D_GNU_SOURCE -Ilib
