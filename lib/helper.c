@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <string.h>
-#include "pwm.h"
+#include "helper.h"
+#include "def.h"
 
 int
 pwm_find_home(pwm_str_t *s) {
@@ -24,6 +25,11 @@ pwm_find_home(pwm_str_t *s) {
     return -1;
   }
   return 0;
+}
+
+const char *
+pwm_find_email() {
+  return getenv(PWM_EMAIL_ENV_VAR);
 }
 
 int
