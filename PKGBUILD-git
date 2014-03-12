@@ -4,13 +4,13 @@ pkgver='0.0.0'
 pkgrel=1
 pkgdesc="git/gpg based password manager"
 arch=('i686' 'x86_64')
-url="git.honkgong.info/ushi/pwm"
+url="github.com/ushis/pwm"
 license=('GPL')
 depends=('libgit2' 'gpgme')
 optdepends=('xclip: clipboard support')
 provides=('pwm')
 conflicts=('pwm')
-source=('pwm::git+https://git.honkgong.info/ushi/pwm.git#branch=master')
+source=('pwm::git+https://github.com/ushis/pwm.git#branch=master')
 sha256sums=('SKIP')
 
 pkgver() {
