@@ -3,16 +3,37 @@
 
 #include "str.h"
 
-/* finds the pwm home directory */
+/**
+ * Finds the pwm home directory.
+ *
+ * @param  s  String pointer to store the result in
+ * @return 0 on success or an error code
+ */
 int pwm_find_home(pwm_str_t *s);
 
-/* finds the pwm email address */
+/**
+ * Finds the pwm email address.
+ *
+ * @return The email or NULL if no email was found
+ */
 const char *pwm_find_email();
 
-/* reads a line from stdin into s */
+/**
+ * Reads a line from stdin.
+ *
+ * @param  s       String pointer to store the result in
+ * @param  prompt  Prompt to show
+ * @return 0 on success or an error code
+ */
 int pwm_read_line(pwm_str_t *s, const char *prompt);
 
-/* same as pwm_read_line() without echoing the entered characters */
+/**
+ * Reads a line from stdin without printing the entered characters.
+ *
+ * @param  s       String pointer to store the result in
+ * @param  prompt  Prompt to show
+ * @return 0 on success or an error code
+ */
 int pwm_read_line_hidden(pwm_str_t *s, const char *prompt);
 
 #endif /* HELPER_H */

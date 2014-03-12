@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-/* string struct */
+/** Representation of a string. */
 typedef struct {
   char *buf;
   size_t len;
@@ -12,37 +12,108 @@ typedef struct {
 
 #define PWM_STR_INIT(s) pwm_str_t s = {NULL,0,0}
 
-/* resizes the string buffer */
+/**
+ * Resizes the string buffer.
+ *
+ * @param  s  String pointer
+ * @param  n  The new buffer size
+ * @return 0 on success or an error code
+ */
 int pwm_str_resize(pwm_str_t *s, size_t n);
 
-/* frees a string */
+/**
+ * Frees the string buffer.
+ *
+ * Note: This function only frees the internal buffer of the string, not the
+ * string itself.
+ *
+ * @param  s  String pointer
+ */
 void pwm_str_free(pwm_str_t *s);
 
-/* copies a string */
+/**
+ * Copies a string.
+ *
+ * @param  dst  String pointer to store the result
+ * @param  src  String pointer to copy
+ * return 0 on success or an error code
+ */
 int pwm_str_cpy(pwm_str_t *dst, pwm_str_t *src);
 
-/* sets the string buffer */
+/**
+ * Sets the string buffer.
+ *
+ * @param  s    String pointer
+ * @param  buf  Buffer to copy into the string buffer
+ * @param  n    Number of bytes to copy
+ * @return 0 on success or an error code
+ */
 int pwm_str_set(pwm_str_t *s, const char *buf, size_t n);
 
-/* appends a buffer to the string */
+/**
+ * Appends a buffer to a string.
+ *
+ * @param  s    String pointer
+ * @param  buf  Buffer to append
+ * @param  n    Number of bytes to append
+ * @return 0 on success or an error code
+ */
 int pwm_str_append(pwm_str_t *s, const char *buf, size_t n);
 
-/* same as pwm_str_append, but inserts a '/' before the buf if necessary */
+/**
+ * Appends a buffer to a string and insert a '/' before if necessary.
+ *
+ * @param  s    String pointer
+ * @param  buf  Buffer to append
+ * @param  n    Number of bytes to append
+ * @return 0 on success or an error code
+ */
 int pwm_str_append_path_component(pwm_str_t *s, const char *buf, size_t n);
 
-/* shrinks a string */
+/**
+ * Shrinks a string.
+ *
+ * @param  s  String pointer
+ * @param  n  The new size
+ */
 void pwm_str_shrink(pwm_str_t *s, size_t n);
 
-/* compares two strings */
+/**
+ * Compares two strings with each other.
+ *
+ * @param  a  A string pointer
+ * @param  b  Another string pointer
+ * @return 0 if the a and b are equal - see man memcmp for more info
+ */
 int pwm_str_cmp(pwm_str_t *a, pwm_str_t *b);
 
-/* reads a line from stream into s */
+/**
+ * Reads a line from a stream.
+ *
+ * @param  s       String pointer to store the result in
+ * @param  stream  The stream to read from
+ * @return 0 on success or an error code
+ */
 int pwm_str_read_line(pwm_str_t *s, FILE *stream);
 
-/* encodes a raw byte buffer to hex and writes the result to dst */
-int pwm_str_hex_encode(pwm_str_t *dst, const char *buf, size_t n);
+/**
+ * Encodes a buffer to hex.
+ *
+ * @param  dst  String pointer to store the result in
+ * @param  buf  Buffer to encode
+ * @param  n    Number of bytes to encode
+ * @return 0 on success or an error code
+ */
+int pwm_str_hex_encode(pwm_str_t *s, const char *buf, size_t n);
 
-/* decodes a hex buffer to raw bytes and writes the result to dst */
-int pwm_str_hex_decode(pwm_str_t *dst, const char *buf, size_t n);
+/**
+ * Decodes a hex encoded buffer.
+ *
+ * @param  dst  String pointer to store the result in
+ * @param  buf  Buffer to decode
+ * @param  n    Number of bytes to decode
+ * @return 0 on success or an error code
+ */
+int pwm_str_hex_decode(pwm_str_t *s, const char *buf, size_t n);
 
 #endif /* STR_H */

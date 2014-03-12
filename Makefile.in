@@ -33,6 +33,10 @@ $(LIBARC): $(LIBOBJ)
 $(LIBOBJ): %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $^
 
+.PHONY: doc
+doc:
+	cm doc docurium.json
+
 .PHONY: install
 install:
 	install -Dm 0755 $(BIN) $(DESTDIR)$(BINDIR)/$(BIN)

@@ -1,0 +1,7 @@
+{
+  "name": "pwm",
+  "github": "ushis/pwm",
+  "input": "lib",
+  "branch": "gh-pages",
+  "prefix": "pwm_"
+}
