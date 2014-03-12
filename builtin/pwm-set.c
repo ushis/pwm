@@ -33,7 +33,7 @@ run(opts_t *opts, const char *key) {
   PWM_STR_INIT(buf);
 
   if ((err = pwm_find_home(&buf)) < 0) {
-    fprintf(stderr, "couldn't find the pwm buf dir\n");
+    fprintf(stderr, "couldn't find the pwm home dir\n");
     goto cleanup;
   }
 
