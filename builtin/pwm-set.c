@@ -64,7 +64,7 @@ run(opts_t *opts, const char *key) {
   }
   pwm_db_clean(db);
 
-  if ((err = pwm_clip_set(&buf)) >= 0) {
+  if (opts->clip && (err = pwm_clip_set(&buf)) >= 0) {
     fprintf(stderr, "stored your %s password in the clipboard\n", key);
   }
 
