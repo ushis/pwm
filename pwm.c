@@ -79,5 +79,5 @@ main(int argc, char **argv) {
   if ((cmd = cmd_find(argv[1])) == NULL) {
     usage();
   }
-  return cmd_exec(cmd, &argv[1]);
+  exit(cmd_exec(cmd, &argv[1]));
 }
