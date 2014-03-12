@@ -1,6 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H 1
 
+#define PWM_VERSION "@PACKAGE_VERSION@"
 #define PWM_EXEC_DIR "@pwmexecdir@"
 
 #endif /* CONFIG_H */
