@@ -26,7 +26,8 @@ pwm_gen_rand(char *buf, size_t n) {
   return 0;
 }
 
-const char *alnum = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const char *alnum =
+  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 int
 pwm_gen_alnum(pwm_str_t *s, size_t n) {
@@ -53,7 +54,7 @@ pwm_gen_ascii(pwm_str_t *s, size_t n) {
   }
 
   for (i = 0; i < n; i++) {
-    buf[i] = (abs(buf[i])%('~'+1-'!'))+'!';
+    buf[i] = (abs(buf[i])%('~'-'!'+1))+'!';
   }
   return pwm_str_set(s, buf, n);
 }
@@ -74,10 +75,26 @@ pwm_gen_hex(pwm_str_t *s, size_t n) {
   return 0;
 }
 
+int
+pwm_gen_num(pwm_str_t *s, size_t n) {
+  size_t i;
+  char buf[n];
+
+  if (pwm_gen_rand(buf, n) < 0) {
+    return -1;
+  }
+
+  for (i = 0; i < n; i++) {
+    buf[i] = (abs(buf[i])%10)+'0';
+  }
+  return pwm_str_set(s, buf, n);
+}
+
 const pwm_gen_t gens[] = {
   {"alnum", "random alphanumeric characters",    pwm_gen_alnum},
   {"ascii", "random printable ascii characters", pwm_gen_ascii},
-  {"hex",   "random hex",                        pwm_gen_hex}
+  {"hex",   "random hex",                        pwm_gen_hex},
+  {"num",   "random numeric characters",         pwm_gen_num}
 };
 
 const pwm_gen_t *
