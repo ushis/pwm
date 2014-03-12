@@ -45,6 +45,11 @@ When building from the git repo, run autoconf to generate the configure script:
 
     autoconf -o configure configure.ac
 
+## Hacking pwm
+
+If you want to hack on pwm, check out the
+[API documentation](http://ushis.github.io/pwm).
+
 ## LICENSE (GPL)
 
 This program is free software: you can redistribute it and/or modify
