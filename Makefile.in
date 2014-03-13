@@ -19,19 +19,19 @@ LDFLAGS += -lgpgme -lgit2
 all: $(BIN) $(BUILTINBIN)
 
 $(BIN): $(SRC)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ $^
 
 $(BUILTINBIN): %: %.o $(LIBARC)
 	$(CC) $(LDFLAGS) -o $@ $^
 
 $(BUILTINOBJ): %.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $^
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $^
 
 $(LIBARC): $(LIBOBJ)
 	$(AR) csr $@ $^
 
 $(LIBOBJ): %.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $^
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $^
 
 .PHONY: doc
 doc:
