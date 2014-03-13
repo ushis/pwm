@@ -14,6 +14,7 @@ pwm is a password manager using [GnuPG](http://www.gnupg.org) to encrypt and
       help            show this help
       list            list all passwords
       log             print the log
+      note            get, set or del a password note
       set             set a password
       version         show version
 
