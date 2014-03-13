@@ -16,8 +16,8 @@ pwm_init() {
   }
 
   /* disable coredumps */
-  if (prlimit(0, RLIMIT_CORE, &zero, NULL) < 0) {
-    perror("prlimit");
+  if (setrlimit(RLIMIT_CORE, &zero) < 0) {
+    perror("setrlimit");
     exit(EXIT_FAILURE);
   }
 

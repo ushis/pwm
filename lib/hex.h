@@ -1,6 +1,8 @@
 #ifndef HEX_H
 #define HEX_H 1
 
+#include <sys/types.h>
+
 /**
  * Calculates the minimal buffer size needed to encode data of a
  * specified size.
