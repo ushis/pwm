@@ -98,6 +98,41 @@ pwm_db_del(pwm_db_t *db, const char *key) {
 }
 
 int
+pwm_db_note_get(pwm_db_t *db, const char *key, pwm_str_t *dst) {
+  PWM_STR_INIT(src);
+  int err;
+
+  if ((err = pwm_git_note_get(db->git, key, &src)) < 0) {
+    goto cleanup;
+  }
+  err = pwm_gpg_decrypt(db->gpg, dst, &src);
+
+cleanup:
+  pwm_str_free(&src);
+  return err;
+}
+
+int
+pwm_db_note_set(pwm_db_t *db, const char *key, const pwm_str_t *src) {
+  PWM_STR_INIT(dst);
+  int err;
+
+  if ((err = pwm_gpg_encrypt_armor(db->gpg, &dst, src)) < 0) {
+    goto cleanup;
+  }
+  err = pwm_git_note_set(db->git, key, &dst);
+
+cleanup:
+  pwm_str_free(&dst);
+  return err;
+}
+
+int
+pwm_db_note_del(pwm_db_t *db, const char *key) {
+  return pwm_git_note_rm(db->git, key);
+}
+
+int
 pwm_db_list(pwm_db_t *db, pwm_git_walk_entries_cb cb) {
   return pwm_git_walk_entries(db->git, cb);
 }

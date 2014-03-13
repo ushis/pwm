@@ -19,4 +19,5 @@ pwm-gen
 pwm-get
 pwm-list
 pwm-log
+pwm-note
 pwm-set

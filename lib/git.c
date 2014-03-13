@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
 #include <errno.h>
 #include "git.h"
 
@@ -98,16 +99,16 @@ pwm_git_free(pwm_git_t *git) {
 int
 pwm_git_clean(pwm_git_t *git) {
   int err;
-  git_oid oid;
+  git_oid id;
   git_object *obj = NULL;
   git_reset_t reset_type = GIT_RESET_HARD;
   git_checkout_opts opts = GIT_CHECKOUT_OPTS_INIT;
 
-  if ((err = git_reference_name_to_id(&oid, git->repo, "HEAD")) < 0) {
+  if ((err = git_reference_name_to_id(&id, git->repo, "HEAD")) < 0) {
     goto cleanup;
   }
 
-  if ((err = git_object_lookup(&obj, git->repo, &oid, GIT_OBJ_COMMIT)) < 0) {
+  if ((err = git_object_lookup(&obj, git->repo, &id, GIT_OBJ_COMMIT)) < 0) {
     goto cleanup;
   }
 
@@ -130,21 +131,21 @@ cleanup:
 }
 
 int
-pwm_git_get(pwm_git_t *git, const char *path, pwm_str_t *dst) {
+pwm_git_get(pwm_git_t *git, const char *path, pwm_str_t *s) {
   const git_tree_entry *entry;
   git_blob *blob = NULL;
   int err;
 
   if ((entry = git_tree_entry_byname(git->tree, path)) == NULL) {
-    fprintf(stderr, "pwm_git_entry_content: %s\n", giterr_last()->message);
+    fprintf(stderr, "pwm_git_get: %s\n", giterr_last()->message);
     return -1;
   }
 
   if ((err = git_tree_entry_to_object((git_object **) &blob, git->repo, entry)) < 0) {
-    fprintf(stderr, "pwm_git_entry_content: %s\n", giterr_last()->message);
+    fprintf(stderr, "pwm_git_get: %s\n", giterr_last()->message);
     goto cleanup;
   }
-  err = pwm_str_set(dst, git_blob_rawcontent(blob), git_blob_rawsize(blob));
+  err = pwm_str_set(s, git_blob_rawcontent(blob), git_blob_rawsize(blob));
 
 cleanup:
   git_blob_free(blob);
@@ -162,10 +163,10 @@ pwm_git_has(pwm_git_t *git, const char *path) {
 int
 pwm_git_add(pwm_git_t *git, const char *path, const pwm_str_t *s) {
   git_treebuilder *bld = NULL;
-  git_oid oid;
+  git_oid id;
   int err;
 
-  if ((err = git_blob_create_frombuffer(&oid, git->repo, s->buf, s->len)) < 0) {
+  if ((err = git_blob_create_frombuffer(&id, git->repo, s->buf, s->len)) < 0) {
     fprintf(stderr, "pwm_git_add: %s\n", giterr_last()->message);
     goto cleanup;
   }
@@ -175,17 +176,17 @@ pwm_git_add(pwm_git_t *git, const char *path, const pwm_str_t *s) {
     goto cleanup;
   }
 
-  if ((err = git_treebuilder_insert(NULL, bld, path, &oid, 0100644)) < 0) {
+  if ((err = git_treebuilder_insert(NULL, bld, path, &id, 0100644)) < 0) {
     fprintf(stderr, "pwm_git_add: %s\n", giterr_last()->message);
     goto cleanup;
   }
 
-  if ((err = git_treebuilder_write(&oid, git->repo, bld)) < 0) {
+  if ((err = git_treebuilder_write(&id, git->repo, bld)) < 0) {
     fprintf(stderr, "pwm_git_add: %s\n", giterr_last()->message);
     goto cleanup;
   }
 
-  if ((err = git_tree_lookup(&git->tree, git->repo, &oid)) < 0) {
+  if ((err = git_tree_lookup(&git->tree, git->repo, &id)) < 0) {
     fprintf(stderr, "pwm_git_add: %s\n", giterr_last()->message);
   }
 
@@ -197,7 +198,7 @@ cleanup:
 int
 pwm_git_rm(pwm_git_t *git, const char *path) {
   git_treebuilder *bld = NULL;
-  git_oid oid;
+  git_oid id;
   int err;
 
   if ((err = git_treebuilder_create(&bld, git->tree)) < 0) {
@@ -210,12 +211,12 @@ pwm_git_rm(pwm_git_t *git, const char *path) {
     goto cleanup;
   }
 
-  if ((err = git_treebuilder_write(&oid, git->repo, bld)) < 0) {
+  if ((err = git_treebuilder_write(&id, git->repo, bld)) < 0) {
     fprintf(stderr, "pwm_git_rm: %s\n", giterr_last()->message);
     goto cleanup;
   }
 
-  if ((err = git_tree_lookup(&git->tree, git->repo, &oid)) < 0) {
+  if ((err = git_tree_lookup(&git->tree, git->repo, &id)) < 0) {
     fprintf(stderr, "pwm_git_rm: %s\n", giterr_last()->message);
   }
 
@@ -232,7 +233,7 @@ pwm_git_head(pwm_git_t *git, git_commit **commit) {
 int
 pwm_git_commit(pwm_git_t *git, const char *msg) {
   git_commit *head = NULL;
-  git_oid oid;
+  git_oid id;
   size_t n = 0;
   int err;
 
@@ -243,11 +244,80 @@ pwm_git_commit(pwm_git_t *git, const char *msg) {
     }
     n = 1;
   }
-  err = git_commit_create_v(&oid, git->repo, "HEAD", git->sig, git->sig,
+  err = git_commit_create_v(&id, git->repo, "HEAD", git->sig, git->sig,
                             NULL, msg, git->tree, n, head);
 
+  if (err < 0) {
+    fprintf(stderr, "pwm_git_commit: %s\n", giterr_last()->message);
+  }
   git_commit_free(head);
   return err;
+}
+
+const git_oid *
+pwm_git_entry_id(pwm_git_t *git, const char *path) {
+  const git_tree_entry *entry;
+
+  if ((entry = git_tree_entry_byname(git->tree, path)) == NULL) {
+    return NULL;
+  }
+  return git_tree_entry_id(entry);
+}
+
+int
+pwm_git_note_get(pwm_git_t *git, const char *path, pwm_str_t *s) {
+  int err = -1;
+  const git_oid *id;
+  const char *msg;
+  git_note *note = NULL;
+
+  if ((id = pwm_git_entry_id(git, path)) == NULL) {
+    fprintf(stderr, "pwm_git_note_get: %s\n", giterr_last()->message);
+    goto cleanup;
+  }
+
+  if ((err = git_note_read(&note, git->repo, NULL, id)) < 0) {
+    fprintf(stderr, "pwm_git_note_get: %s\n", giterr_last()->message);
+    goto cleanup;
+  }
+  msg = git_note_message(note);
+  err = pwm_str_set(s, msg, strlen(msg));
+
+cleanup:
+  git_note_free(note);
+  return err;
+}
+
+int
+pwm_git_note_set(pwm_git_t *git, const char *path, const pwm_str_t *s) {
+  const git_oid *id;
+
+  if ((id = pwm_git_entry_id(git, path)) == NULL) {
+    fprintf(stderr, "pwm_git_note_add: %s\n", giterr_last()->message);
+    return -1;
+  }
+
+  if (git_note_create(NULL, git->repo, git->sig, git->sig, NULL, id, s->buf, 1) < 0) {
+    fprintf(stderr, "pwm_git_note_add: %s\n", giterr_last()->message);
+    return -1;
+  }
+  return 0;
+}
+
+int
+pwm_git_note_rm(pwm_git_t *git, const char *path) {
+  const git_oid *id;
+
+  if ((id = pwm_git_entry_id(git, path)) == NULL) {
+    fprintf(stderr, "pwm_git_note_rm: %s\n", giterr_last()->message);
+    return -1;
+  }
+
+  if (git_note_remove(git->repo, NULL, git->sig, git->sig, id) < 0) {
+    fprintf(stderr, "pwm_git_note_rm: %s\n", giterr_last()->message);
+    return -1;
+  }
+  return 0;
 }
 
 int

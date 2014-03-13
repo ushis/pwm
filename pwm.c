@@ -27,6 +27,7 @@ const cmd_t cmds[] = {
   {"help",    NULL,                    usage,   "show this help"},
   {"list",    PWM_EXEC_DIR"/pwm-list", NULL,    "list all passwords"},
   {"log",     PWM_EXEC_DIR"/pwm-log",  NULL,    "print the log"},
+  {"note",    PWM_EXEC_DIR"/pwm-note", NULL,    "get, set or delete a note"},
   {"set",     PWM_EXEC_DIR"/pwm-set",  NULL,    "set a password"},
   {"version", NULL,                    version, "show version"}
 };

@@ -88,6 +88,15 @@ void pwm_str_shrink(pwm_str_t *s, size_t n);
 int pwm_str_cmp(pwm_str_t *a, pwm_str_t *b);
 
 /**
+ * Reads from a file descriptor until EOF.
+ *
+ * @param  s   String pointer to store the result in
+ * @param  fd  File descriptor to read from
+ * @return 0 on success or an error code
+ */
+int pwm_str_read_all(pwm_str_t *s, int fd);
+
+/**
  * Reads a line from a stream.
  *
  * @param  s       String pointer to store the result in

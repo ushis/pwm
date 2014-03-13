@@ -88,6 +88,35 @@ int pwm_git_rm(pwm_git_t *git, const char *path);
  */
 int pwm_git_commit(pwm_git_t *git, const char *msg);
 
+/**
+ * Retrieves a blob note.
+ *
+ * @param  git   The git handler
+ * @param  path  Path to the blob
+ * @param  s     String pointer to store the notes contents in
+ * @return 0 on success or an error code
+ */
+int pwm_git_note_get(pwm_git_t *git, const char *path, pwm_str_t *s);
+
+/**
+ * Sets a blob note.
+ *
+ * @param  git   The git handler
+ * @param  path  Path to the blob
+ * @param  s     String pointer with the notes contents
+ * @return 0 on success or an error code
+ */
+int pwm_git_note_set(pwm_git_t *git, const char *path, const pwm_str_t *s);
+
+/**
+ * Removes a blob note.
+ *
+ * @param  git   The git handler
+ * @param  path  Path to the blob
+ * @return 0 on success or an error code
+ */
+int pwm_git_note_rm(pwm_git_t *git, const char *path);
+
 /** Callback function used by pwm_git_walk_entries() */
 typedef int (*pwm_git_walk_entries_cb)(const char *name);
 

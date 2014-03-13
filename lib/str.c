@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "str.h"
 #include "hex.h"
 
@@ -86,6 +87,31 @@ int
 pwm_str_cmp(pwm_str_t *a, pwm_str_t *b) {
   int rc = memcmp(a->buf, b->buf, pwm_str_min_len(a, b));
   return (rc == 0) ? (a->len - b->len) : rc;
+}
+
+int
+pwm_str_read_all(pwm_str_t *s, int fd) {
+  ssize_t n;
+  size_t i = 0;
+
+  for (;;) {
+    if (s->cap <= i && pwm_str_resize(s, (2*s->cap)+1) < 0) {
+      return -1;
+    }
+
+    if ((n = read(fd, &s->buf[i], s->cap-i)) < 0) {
+      perror("read");
+      return -1;
+    }
+
+    if (n == 0) {
+      break;
+    }
+    i += n;
+  }
+  s->buf[i] = '\0';
+  s->len = i;
+  return 0;
 }
 
 int

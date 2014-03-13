@@ -76,6 +76,35 @@ int pwm_db_set(pwm_db_t *db, const char *key, const pwm_str_t *src);
 int pwm_db_del(pwm_db_t *db, const char *key);
 
 /**
+ * Retrieves an entry note.
+ *
+ * @param  db   Database pointer
+ * @param  key  Key of the database entry
+ * @param  dst  String pointer to store the result in
+ * @return 0 on success or an error code
+ */
+int pwm_db_note_get(pwm_db_t *db, const char *key, pwm_str_t *dst);
+
+/**
+ * Sets an entry note.
+ *
+ * @param  db   Database pointer
+ * @param  key  Key of the database entry
+ * @param  src  String pointer containing the note
+ * @return 0 on success or an error code
+ */
+int pwm_db_note_set(pwm_db_t *db, const char *key, const pwm_str_t *src);
+
+/**
+ * Deletes an entry note.
+ *
+ * @param  db   Database pointer
+ * @param  key  Key of the database entry
+ * @return 0 on success or an error code
+ */
+int pwm_db_note_del(pwm_db_t *db, const char *key);
+
+/**
  * Lists all keys in the database.
  *
  * @param  db  Database pointer

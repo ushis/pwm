@@ -59,6 +59,7 @@ cleanup:
   pwm_str_free(&buf);
   return err;
 }
+
 int
 main(int argc, char **argv) {
   char c;
