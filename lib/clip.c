@@ -42,9 +42,5 @@ pwm_clip_set(const pwm_str_t *s) {
     perror("waitpid");
     return -1;
   }
-
-  if (!WIFEXITED(status)) {
-    return -1;
-  }
-  return (WEXITSTATUS(status) > 0) ? -1 : 0;
+  return (WIFEXITED(status) && WEXITSTATUS(status) == 0) ? 0 : -1;
 }
