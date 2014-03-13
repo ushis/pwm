@@ -3,7 +3,7 @@
 #include "pwm.h"
 
 const char *usage_str =
-  "pwm-del [<opts>] <key>\n\n"
+  "pwm del [<opts>] <key>\n\n"
   "options:\n"
   "  -f              ignore nonexistent passwords\n"
   "  -h              show this help";

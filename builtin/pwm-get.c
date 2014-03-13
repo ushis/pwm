@@ -3,7 +3,7 @@
 #include "pwm.h"
 
 const char *usage_str =
-  "pwm-get [<opts>] <key>\n\n"
+  "pwm get [<opts>] <key>\n\n"
   "options:\n"
   "  -c              store the password in the clipboard\n"
   "  -h              show this help";

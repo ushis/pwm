@@ -5,7 +5,7 @@
 #include "pwm.h"
 
 const char *usage_str =
-  "pwm-set [<opts>] <key>\n\n"
+  "pwm set [<opts>] <key>\n\n"
   "options:\n"
   "  -c              store password in the clipboard\n"
   "  -f              override existing password\n"

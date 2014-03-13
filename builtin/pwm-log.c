@@ -4,7 +4,7 @@
 #include "pwm.h"
 
 const char *usage_str =
-  "pwm-log [<opts>]\n\n"
+  "pwm log [<opts>]\n\n"
   "options:\n"
   "  -h              show this help";
 

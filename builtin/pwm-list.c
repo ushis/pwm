@@ -3,7 +3,7 @@
 #include "pwm.h"
 
 const char *usage_str =
-  "pwm-list [<opts>]\n\n"
+  "pwm list [<opts>]\n\n"
   "options:\n"
   "  -h              show this help";
 
