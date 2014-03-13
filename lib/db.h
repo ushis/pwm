@@ -114,7 +114,7 @@ int pwm_db_note_del(pwm_db_t *db, const char *key);
 int pwm_db_list(pwm_db_t *db, pwm_git_walk_entries_cb cb);
 
 /**
- * Lists all log entries
+ * Lists all log entries.
  *
  * @param  db  Database pointer
  * @param  cb  Function to call on each log entry

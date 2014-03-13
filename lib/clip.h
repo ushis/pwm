@@ -11,4 +11,11 @@
  */
 int pwm_clip_set(const pwm_str_t *s);
 
+/**
+ * Clears the clipboard.
+ *
+ * @return 0 on success or an error code
+ */
+int pwm_clip_clear();
+
 #endif /* CLIP_H */

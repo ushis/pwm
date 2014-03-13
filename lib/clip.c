@@ -32,7 +32,8 @@ pwm_clip_set(const pwm_str_t *s) {
   }
   close(fd[0]);
 
-  if (write(fd[1], s->buf, s->len) < s->len) {
+  /* NULL is a valid argument to clear the clipboard */
+  if (s != NULL && write(fd[1], s->buf, s->len) < s->len) {
     fprintf(stderr, "pwm_clip_set: failed to write to clipboard");
     return -1;
   }
@@ -43,4 +44,9 @@ pwm_clip_set(const pwm_str_t *s) {
     return -1;
   }
   return (WIFEXITED(status) && WEXITSTATUS(status) == 0) ? 0 : -1;
+}
+
+int
+pwm_clip_clear() {
+  return pwm_clip_set(NULL);
 }
