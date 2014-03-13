@@ -18,6 +18,15 @@ pwm is a password manager using [GnuPG](http://www.gnupg.org) to encrypt and
       set             set a password
       version         show version
 
+pwm creates a bare git repository at ```~/.pwm```. You can change that
+behaviour by setting the environment variable ```PWM_HOME```:
+
+    export PWM_HOME="${HOME}/path/to/my/pwm/db"
+
+pwm uses the first secret GPG key that can be found, do determine the GPG
+encryption recipient. You can give pwm a hint by setting the environment
+variable ```PWM_EMAIL```.
+
 ## Install
 
 To install pwm make sure you have installed the dependencies:
