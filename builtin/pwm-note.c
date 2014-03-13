@@ -12,13 +12,13 @@ const char *usage_cmd_str =
   "options:\n"
   "  -h              show this help";
 
-int del(pwm_db_t *db, const char *key);
-int get(pwm_db_t *db, const char *key);
-int set(pwm_db_t *db, const char *key);
+int del(pwm_db_t *db, const char *key, pwm_str_t *buf);
+int get(pwm_db_t *db, const char *key, pwm_str_t *buf);
+int set(pwm_db_t *db, const char *key, pwm_str_t *buf);
 
 typedef struct {
   const char *cmd;
-  int (*func)(pwm_db_t *db, const char *key);
+  int (*func)(pwm_db_t *db, const char *key, pwm_str_t *buf);
   const char *help;
 } cmd_t;
 
@@ -47,7 +47,7 @@ usage_cmd(const char *cmd) {
 }
 
 int
-del(pwm_db_t *db, const char *key) {
+del(pwm_db_t *db, const char *key, pwm_str_t *buf) {
   int err;
 
   if ((err = pwm_db_note_del(db, key)) >= 0) {
@@ -57,29 +57,24 @@ del(pwm_db_t *db, const char *key) {
 }
 
 int
-get(pwm_db_t *db, const char *key) {
+get(pwm_db_t *db, const char *key, pwm_str_t *buf) {
   int err;
-  PWM_STR_INIT(buf);
 
-  if ((err = pwm_db_note_get(db, key, &buf)) >= 0) {
-    fputs(buf.buf, stdout);
+  if ((err = pwm_db_note_get(db, key, buf)) >= 0) {
+    fputs(buf->buf, stdout);
   }
-  pwm_str_free(&buf);
   return err;
 }
 
 int
-set(pwm_db_t *db, const char *key) {
+set(pwm_db_t *db, const char *key, pwm_str_t *buf) {
   int err;
-  PWM_STR_INIT(buf);
 
-  if ((err = pwm_str_read_all(&buf, STDIN_FILENO)) < 0) {
-    goto cleanup;
+  if ((err = pwm_str_read_all(buf, STDIN_FILENO)) < 0) {
+    return err;
   }
-  err = pwm_db_note_set(db, key, &buf);
+  err = pwm_db_note_set(db, key, buf);
 
-cleanup:
-  pwm_str_free(&buf);
   return err;
 }
 
@@ -103,7 +98,7 @@ cmd_exec(const cmd_t *cmd, const char *key) {
     err = -1;
     goto cleanup;
   }
-  err = cmd->func(db, key);
+  err = cmd->func(db, key, &buf);
 
 cleanup:
   pwm_db_free(db);
