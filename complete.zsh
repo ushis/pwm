@@ -11,28 +11,11 @@
 #
 # Maybe you have to purge your compdump.
 _pwm() {
-  local curcontext="$curcontext" state line ret=1
+  local curcontext="$curcontext" state line
 
   _arguments \
-    '1: :->cmd' \
-    '*:: :->args' \
-    && ret=0
-
-  case "${state}" in
-    cmd)
-      __pwm_commands && ret=0
-      ;;
-    args)
-      case "${line[1]}" in
-        del|gen|get|note|set)
-          __pwm_${line[1]} && ret=0
-          ;;
-        *)
-          ret=1
-      esac
-  esac
-
-  return ret
+    '1: :__pwm_commands' \
+    '*:: :__pwm_arguments'
 }
 
 __pwm_force() {
@@ -62,11 +45,29 @@ __pwm_commands() {
     'version[show pwm version]'
 }
 
+__pwm_arguments() {
+  case "${words[1]}" in
+    del|gen|get|note|set)
+      __pwm_${words[1]} && return 0
+      ;;
+    *)
+      return 1
+  esac
+}
+
 __pwm_del() {
   _arguments \
     '*:key:__pwm_keys' \
     '-f[ignore nonexistent passwords]' \
     '-h[show help]'
+}
+
+__pwm_gen_generators() {
+  _values 'pwm generator' \
+    'alnum[random alphanumeric characters]' \
+    'ascii[random printable ascii characters]' \
+    'hex[random hex]' \
+    'num[random numeric characters]'
 }
 
 __pwm_gen() {
@@ -77,20 +78,11 @@ __pwm_gen() {
   _arguments \
     '-c[store password in the clipboard]' \
     '-f[override existing password]' \
-    '-g+[generator to use (default: alnum)]:generator:->gen' \
+    '-g+[generator to use (default: alnum)]:generator:__pwm_gen_generators' \
     '-h[show help]' \
     '-l+[password length (default: 32)]:len' \
     '-p[print generated password]' \
-    $keys \
-    && ret=0
-
-  [[ "${state}" != 'gen' ]] && return ret
-
-  _values 'pwm generator' \
-    'alnum[random alphanumeric characters]' \
-    'ascii[random printable ascii characters]' \
-    'hex[random hex]' \
-    'num[random numeric characters]'
+    $keys
 }
 
 __pwm_get() {
@@ -100,30 +92,23 @@ __pwm_get() {
     '-h[show help]'
 }
 
-__pwm_note() {
-  local ret=1
+__pwm_note_commands() {
+  _values 'pwm note command' \
+    'del[delete a note]' \
+    'get[retrieve a note]' \
+    'set[set a note]'
+}
 
+__pwm_note_arguments() {
   _arguments \
-    '1: :->cmd' \
-    '*:: :->args' \
-    && ret=0
+    '*:key:__pwm_keys' \
+    '-h[show help]'
+}
 
-  case "${state}" in
-    cmd)
-      _values 'pwm note command' \
-        'del[delete a note]' \
-        'get[retrieve a note]' \
-        'set[set a note]' \
-        && ret=0
-      ;;
-    args)
-      _arguments \
-        '*:key:__pwm_keys' \
-        '-h[show help]' \
-        ret=0
-  esac
-
-  return ret
+__pwm_note() {
+  _arguments \
+    '1: :__pwm_note_commands' \
+    '*:: :__pwm_note_arguments'
 }
 
 __pwm_set() {
