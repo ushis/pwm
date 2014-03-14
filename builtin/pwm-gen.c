@@ -76,17 +76,13 @@ run(opts_t *opts, const char *key) {
     goto cleanup;
   }
 
-  if (!opts->clip) {
-    if (opts->print) {
-      fprintf(stderr, "%s\n", buf.buf);
-    } else {
-      fprintf(stderr, "generated your %s password\n", key);
-    }
+  if (opts->clip && (err = pwm_clip_set(&buf)) >= 0) {
+    fprintf(stderr, "stored your generated %s password in the clipboard\n", key);
     goto cleanup;
   }
 
-  if ((err = pwm_clip_set(&buf)) >= 0) {
-    fprintf(stderr, "stored your generated %s password in the clipboard\n", key);
+  if (opts->print) {
+    fprintf(stderr, "%s\n", buf.buf);
   } else {
     fprintf(stderr, "generated your %s password\n", key);
   }
