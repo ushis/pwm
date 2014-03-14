@@ -20,12 +20,13 @@ pkgver() {
 
 build() {
   cd "${srcdir}/pwm"
-	autoconf -o configure configure.ac
+  autoconf -o configure configure.ac
   ./configure --prefix=/usr --with-pwmexecdir=/usr/lib/pwm
-	make
+  make
 }
 
 package() {
   cd "${srcdir}/pwm"
-	make DESTDIR="${pkgdir}" install
+  make DESTDIR="${pkgdir}" install
+  install -Dm 0644 'complete.zsh' "${pkgdir}/usr/share/zsh/site-functions/_pwm"
 }
