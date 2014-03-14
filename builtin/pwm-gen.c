@@ -1,9 +1,9 @@
+#include "pwm.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
 #include <getopt.h>
-#include "pwm.h"
 
 const char *usage_str =
   "pwm gen [<opts>] <key>\n\n"

@@ -1,9 +1,9 @@
+#include "git.h"
+#include "gpg.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <sys/resource.h>
-#include "git.h"
-#include "gpg.h"
 
 void
 pwm_init() {

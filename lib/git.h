@@ -1,8 +1,8 @@
 #ifndef GIT_H
 #define GIT_H 1
 
-#include <git2.h>
 #include "str.h"
+#include <git2.h>
 
 /** Git handler */
 typedef struct {

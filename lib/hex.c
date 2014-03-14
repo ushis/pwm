@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include "hex.h"
+#include <stdio.h>
 
 static const char *hex = "0123456789abcdef";
 

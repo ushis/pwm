@@ -1,7 +1,7 @@
+#include "pwm.h"
 #include <stdio.h>
 #include <time.h>
 #include <getopt.h>
-#include "pwm.h"
 
 const char *usage_str =
   "pwm log [<opts>]\n\n"

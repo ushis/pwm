@@ -1,6 +1,6 @@
+#include "gpg.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "gpg.h"
 
 int
 pwm_gpg_init() {

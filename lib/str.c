@@ -1,8 +1,8 @@
+#include "str.h"
+#include "hex.h"
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "str.h"
-#include "hex.h"
 
 int
 pwm_str_resize(pwm_str_t *s, size_t cap) {

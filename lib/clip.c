@@ -1,8 +1,8 @@
+#include "clip.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include "clip.h"
 
 int
 pwm_clip_set(const pwm_str_t *s) {

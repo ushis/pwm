@@ -1,7 +1,7 @@
+#include "db.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "db.h"
 
 int
 pwm_db_new(pwm_db_t **out, const char *home, const char *email) {

@@ -1,8 +1,8 @@
 #ifndef GPG_H
 #define GPG_H 1
 
-#include <gpgme.h>
 #include "str.h"
+#include <gpgme.h>
 
 /** GPG handler */
 typedef struct {

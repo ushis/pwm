@@ -1,11 +1,11 @@
+#include "gen.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <string.h>
-#include "gen.h"
+#include <sys/types.h>
+#include <sys/stat.h>
 
 int
 pwm_gen_rand(char *buf, size_t n) {

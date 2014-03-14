@@ -1,6 +1,6 @@
+#include "pwm.h"
 #include <stdio.h>
 #include <getopt.h>
-#include "pwm.h"
 
 const char *usage_str =
   "pwm del [<opts>] <key>\n\n"

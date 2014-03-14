@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <termios.h>
-#include <string.h>
 #include "helper.h"
 #include "def.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <termios.h>
 
 int
 pwm_find_home(pwm_str_t *s) {

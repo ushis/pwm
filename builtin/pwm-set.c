@@ -1,8 +1,8 @@
+#include "pwm.h"
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <getopt.h>
-#include "pwm.h"
 
 const char *usage_str =
   "pwm set [<opts>] <key>\n\n"

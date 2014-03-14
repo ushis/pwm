@@ -1,11 +1,11 @@
+#include "git.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <string.h>
 #include <errno.h>
-#include "git.h"
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 int
 pwm_git_init() {
