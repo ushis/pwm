@@ -34,7 +34,7 @@ const cmd_t cmds[] = {
 
 void
 usage() {
-  int i;
+  size_t i;
 
   fprintf(stderr, "usage: %s\n\ncommands:\n", usage_str);
 
@@ -50,7 +50,7 @@ version() {
 
 const cmd_t *
 cmd_find(const char *cmd) {
-  int i;
+  size_t i;
 
   for (i = 0; i < (sizeof(cmds)/sizeof(cmd_t)); i++) {
     if (strcmp(cmd, cmds[i].cmd) == 0) {
