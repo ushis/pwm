@@ -13,6 +13,7 @@ const char *usage_str =
   "  -g <generator>  generator to use (default: alnum)\n"
   "  -h              show this help\n"
   "  -l <len>        password length (default: 32)\n"
+  "  -m <msg>        use a custom log message\n"
   "  -p              print generated password";
 
 void
@@ -30,13 +31,14 @@ usage() {
 
 typedef struct {
   char *generator;
+  char *msg;
   ssize_t len;
   int force;
   int print;
   int clip;
 } opts_t;
 
-#define OPTS_DEFAULT {"alnum",32,0,0,0}
+#define OPTS_DEFAULT {"alnum",NULL,32,0,0,0}
 
 int
 run(opts_t *opts, const char *key) {
@@ -69,7 +71,7 @@ run(opts_t *opts, const char *key) {
   if ((err = gen->func(&buf, opts->len)) < 0) {
     goto cleanup;
   }
-  err = pwm_db_set(db, key, &buf);
+  err = pwm_db_set(db, key, opts->msg, &buf);
   pwm_db_clean(db);
 
   if (err < 0) {
@@ -99,7 +101,7 @@ main(int argc, char **argv) {
   int err;
   opts_t opts = OPTS_DEFAULT;
 
-  while ((c = getopt(argc, argv, "cfg:hl:p")) > -1) {
+  while ((c = getopt(argc, argv, "cfg:hl:m:p")) > -1) {
     switch (c) {
     case 'c':
       opts.clip = 1;
@@ -112,6 +114,9 @@ main(int argc, char **argv) {
       break;
     case 'l':
       opts.len = atol(optarg);
+      break;
+    case 'm':
+      opts.msg = optarg;
       break;
     case 'p':
       opts.print = 1;

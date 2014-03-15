@@ -61,19 +61,21 @@ int pwm_db_has(pwm_db_t *db, const char *key);
  *
  * @param  db   Database pointer
  * @param  key  Key of the database entry
+ * @param  msg  Optional log message
  * @param  src  String pointer containing the value to store
  * @return 0 on success or an error code
  */
-int pwm_db_set(pwm_db_t *db, const char *key, const pwm_str_t *src);
+int pwm_db_set(pwm_db_t *db, const char *key, const char *msg, const pwm_str_t *src);
 
 /**
  * Deletes a database entry.
  *
  * @param  db   Database pointer
  * @param  key  Key of the database entry
+ * @param  msg  Optional log message
  * @return 0 on success or an error code
  */
-int pwm_db_del(pwm_db_t *db, const char *key);
+int pwm_db_del(pwm_db_t *db, const char *key, const char *msg);
 
 /**
  * Retrieves an entry note.

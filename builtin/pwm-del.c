@@ -6,7 +6,8 @@ const char *usage_str =
   "pwm del [<opts>] <key>\n\n"
   "options:\n"
   "  -f              ignore nonexistent passwords\n"
-  "  -h              show this help";
+  "  -h              show this help\n"
+  "  -m <msg>        use a custom log message";
 
 void
 usage() {
@@ -15,10 +16,11 @@ usage() {
 }
 
 typedef struct {
+  char *msg;
   int force;
 } opt_t;
 
-#define OPTS_DEFAULT {0}
+#define OPTS_DEFAULT {NULL,0}
 
 int
 run (opt_t *opts, const char *key) {
@@ -45,7 +47,7 @@ run (opt_t *opts, const char *key) {
     goto cleanup;
   }
 
-  if ((err = pwm_db_del(db, key)) >= 0) {
+  if ((err = pwm_db_del(db, key, opts->msg)) >= 0) {
     fprintf(stderr, "deleted your %s password\n", key);
   }
   pwm_db_clean(db);
@@ -62,10 +64,13 @@ main(int argc, char **argv) {
   int err;
   opt_t opts = OPTS_DEFAULT;
 
-  while ((c = getopt(argc, argv, "fh")) > -1) {
+  while ((c = getopt(argc, argv, "fhm:")) > -1) {
     switch (c) {
     case 'f':
       opts.force = 1;
+      break;
+    case 'm':
+      opts.msg = optarg;
       break;
     default:
       usage();

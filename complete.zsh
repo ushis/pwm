@@ -59,7 +59,8 @@ __pwm_del() {
   _arguments \
     '*:key:__pwm_keys' \
     '-f[ignore nonexistent passwords]' \
-    '-h[show help]'
+    '-h[show help]' \
+    '-m+[custom log message]:msg'
 }
 
 __pwm_gen_generators() {
@@ -81,6 +82,7 @@ __pwm_gen() {
     '-g+[generator to use (default: alnum)]:generator:__pwm_gen_generators' \
     '-h[show help]' \
     '-l+[password length (default: 32)]:len' \
+    '-m+[custom log message]:msg' \
     '-p[print generated password]' \
     $keys
 }
@@ -120,6 +122,7 @@ __pwm_set() {
     '-c[store password in the clipboard]' \
     '-f[override existing password]' \
     '-h[show help]' \
+    '-m+[custom log message]:msg' \
     '-p[print password]' \
     $keys
 }

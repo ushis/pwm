@@ -10,6 +10,7 @@ const char *usage_str =
   "  -c              store password in the clipboard\n"
   "  -f              override existing password\n"
   "  -h              show this help\n"
+  "  -m <msg>        use a custom log message\n"
   "  -p              print password";
 
 void
@@ -19,12 +20,13 @@ usage() {
 }
 
 typedef struct {
+  char *msg;
   int clip;
   int force;
   int print;
 } opts_t;
 
-#define OPTS_DEFAULT {0,0,0}
+#define OPTS_DEFAULT {NULL,0,0,0}
 
 int
 run(opts_t *opts, const char *key) {
@@ -59,7 +61,7 @@ run(opts_t *opts, const char *key) {
     goto cleanup;
   }
 
-  if ((err = pwm_db_set(db, key, &buf)) >= 0) {
+  if ((err = pwm_db_set(db, key, opts->msg, &buf)) >= 0) {
     fprintf(stderr, "\rsaved your %s password\n", key);
   }
   pwm_db_clean(db);
@@ -80,13 +82,16 @@ main(int argc, char **argv) {
   int err;
   opts_t opts = OPTS_DEFAULT;
 
-  while ((c = getopt(argc, argv, "cfhp")) > -1) {
+  while ((c = getopt(argc, argv, "cfhm:p")) > -1) {
     switch (c) {
     case 'c':
       opts.clip = 1;
       break;
     case 'f':
       opts.force = 1;
+      break;
+    case 'm':
+      opts.msg = optarg;
       break;
     case 'p':
       opts.print = 1;
