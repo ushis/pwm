@@ -98,11 +98,7 @@ pwm_db_del(pwm_db_t *db, const char *key, const char *msg) {
     sprintf(buf, "- %s", key);
     msg = buf;
   }
-
-  if (pwm_git_commit(db->git, msg) < 0) {
-    return -1;
-  }
-  return 0;
+  return pwm_git_commit(db->git, msg);
 }
 
 int
