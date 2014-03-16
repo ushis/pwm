@@ -5,7 +5,11 @@ pwm is a password manager using [GnuPG](http://www.gnupg.org) to encrypt and
 
 ## Usage
 
-    usage: pwm <cmd> [<args>]
+    usage: pwm [<opts>] <cmd> [<args>]
+
+    options:
+      -d <path>       database directory
+      -k <key>        gpg key id
 
     commands:
       del             delete a password
@@ -19,13 +23,14 @@ pwm is a password manager using [GnuPG](http://www.gnupg.org) to encrypt and
       version         show version
 
 pwm creates a bare git repository at ```~/.pwm```. You can change that
-behaviour by setting the environment variable ```PWM_HOME```:
+behaviour by using the ```-d``` option or setting the environment
+variable ```PWM_HOME```
 
     export PWM_HOME="${HOME}/path/to/my/pwm/db"
 
 pwm uses the first secret GPG key that can be found, do determine the GPG
-encryption recipient. You can give pwm a hint by setting the environment
-variable ```PWM_KEY```:
+encryption recipient. You can give pwm a hint by using the ```-k``` option or
+setting the environment variable ```PWM_KEY```
 
     export PWM_KEY='5G532AB7'
 
