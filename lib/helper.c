@@ -27,11 +27,6 @@ pwm_find_home(pwm_str_t *s) {
   return 0;
 }
 
-const char *
-pwm_find_key_id() {
-  return getenv(PWM_KEY_ID_ENV_VAR);
-}
-
 int
 pwm_read_line(pwm_str_t *s, const char *prompt) {
   fputs(prompt, stdout);

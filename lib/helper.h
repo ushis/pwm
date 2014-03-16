@@ -12,13 +12,6 @@
 int pwm_find_home(pwm_str_t *s);
 
 /**
- * Finds the pwm key id.
- *
- * @return The key id or NULL if no id was found
- */
-const char *pwm_find_key_id();
-
-/**
  * Reads a line from stdin.
  *
  * @param  s       String pointer to store the result in

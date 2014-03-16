@@ -1,4 +1,5 @@
 #include "gpg.h"
+#include "def.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -20,6 +21,10 @@ pwm_gpg_new(pwm_gpg_t **out, const char *key_id) {
   if ((err = gpgme_new(&gpg->ctx)) > 0) {
     fprintf(stderr, "pwm_db_init_gpg: %s\n", gpgme_strerror(err));
     goto fail;
+  }
+
+  if (key_id == NULL) {
+    key_id = getenv(PWM_KEY_ID_ENV_VAR);
   }
 
   if ((err = gpgme_op_keylist_start(gpg->ctx, key_id, 1)) > 0) {
