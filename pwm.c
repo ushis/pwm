@@ -26,15 +26,15 @@ typedef struct {
 } cmd_t;
 
 const cmd_t cmds[] = {
-  {"del",     PWM_EXEC_DIR"/pwm-del",  NULL,    "delete a password"},
-  {"gen",     PWM_EXEC_DIR"/pwm-gen",  NULL,    "generate a password"},
-  {"get",     PWM_EXEC_DIR"/pwm-get",  NULL,    "retrieve a password"},
-  {"help",    NULL,                    usage,   "show this help"},
-  {"list",    PWM_EXEC_DIR"/pwm-list", NULL,    "list all passwords"},
-  {"log",     PWM_EXEC_DIR"/pwm-log",  NULL,    "print the log"},
-  {"note",    PWM_EXEC_DIR"/pwm-note", NULL,    "get, set or del a password note"},
-  {"set",     PWM_EXEC_DIR"/pwm-set",  NULL,    "set a password"},
-  {"version", NULL,                    version, "show version"}
+  {"del",     PACKAGE_EXEC_DIR"/pwm-del",  NULL,    "delete a password"},
+  {"gen",     PACKAGE_EXEC_DIR"/pwm-gen",  NULL,    "generate a password"},
+  {"get",     PACKAGE_EXEC_DIR"/pwm-get",  NULL,    "retrieve a password"},
+  {"help",    NULL,                        usage,   "show this help"},
+  {"list",    PACKAGE_EXEC_DIR"/pwm-list", NULL,    "list all passwords"},
+  {"log",     PACKAGE_EXEC_DIR"/pwm-log",  NULL,    "print the log"},
+  {"note",    PACKAGE_EXEC_DIR"/pwm-note", NULL,    "get, set or del a password note"},
+  {"set",     PACKAGE_EXEC_DIR"/pwm-set",  NULL,    "set a password"},
+  {"version", NULL,                        version, "show version"}
 };
 
 typedef struct {
@@ -57,7 +57,7 @@ usage() {
 
 void
 version() {
-  fprintf(stderr, "pwm %s\n", PWM_VERSION);
+  fprintf(stderr, "pwm %s\n", PACKAGE_VERSION);
 }
 
 const cmd_t *
