@@ -16,11 +16,11 @@ int pwm_gpg_init();
 /**
  * Allocates a new GPG handler.
  *
- * @param  out    GPG pointer to store the allocated handler in
- * @param  email  Email used to determine the GPG recipient
+ * @param  out     GPG pointer to store the allocated handler in
+ * @param  key_id  Key id used to determine the GPG recipient
  * @return 0 on success or an error code
  */
-int pwm_gpg_new(pwm_gpg_t **out, const char *email);
+int pwm_gpg_new(pwm_gpg_t **out, const char *key_id);
 
 /**
  * Frees a GPG handler.

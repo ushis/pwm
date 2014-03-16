@@ -25,7 +25,9 @@ behaviour by setting the environment variable ```PWM_HOME```:
 
 pwm uses the first secret GPG key that can be found, do determine the GPG
 encryption recipient. You can give pwm a hint by setting the environment
-variable ```PWM_EMAIL```.
+variable ```PWM_KEY```:
+
+    export PWM_KEY='5G532AB7'
 
 ## Install
 

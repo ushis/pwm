@@ -14,12 +14,12 @@ typedef struct {
 /**
  * Allocates a new database.
  *
- * @param  out    Pointer to store the allocated database in
- * @param  home   Path to a pwm database
- * @param  email  Email used to determine the GPG recipient
+ * @param  out     Pointer to store the allocated database in
+ * @param  home    Path to a pwm database
+ * @param  key_id  Key id used to determine the GPG recipient
  * @return 0 on success or an error code
  */
-int pwm_db_new(pwm_db_t **out, const char *home, const char *email);
+int pwm_db_new(pwm_db_t **out, const char *home, const char *key_id);
 
 /**
  * Frees a database.

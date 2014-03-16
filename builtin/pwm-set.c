@@ -39,7 +39,7 @@ run(opts_t *opts, const char *key) {
     goto cleanup;
   }
 
-  if ((err = pwm_db_new(&db, buf.buf, pwm_find_email())) < 0) {
+  if ((err = pwm_db_new(&db, buf.buf, pwm_find_key_id())) < 0) {
     goto cleanup;
   }
 

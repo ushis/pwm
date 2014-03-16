@@ -89,7 +89,7 @@ cmd_exec(const cmd_t *cmd, const char *key) {
     goto cleanup;
   }
 
-  if ((err = pwm_db_new(&db, buf.buf, pwm_find_email())) < 0) {
+  if ((err = pwm_db_new(&db, buf.buf, pwm_find_key_id())) < 0) {
     goto cleanup;
   }
 

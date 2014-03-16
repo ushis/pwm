@@ -29,7 +29,7 @@ run() {
     goto cleanup;
   }
 
-  if ((err = pwm_db_new(&db, buf.buf, pwm_find_email())) < 0) {
+  if ((err = pwm_db_new(&db, buf.buf, pwm_find_key_id())) < 0) {
     goto cleanup;
   }
   err = pwm_db_list(db, print_ln);

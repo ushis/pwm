@@ -12,11 +12,11 @@
 int pwm_find_home(pwm_str_t *s);
 
 /**
- * Finds the pwm email address.
+ * Finds the pwm key id.
  *
- * @return The email or NULL if no email was found
+ * @return The key id or NULL if no id was found
  */
-const char *pwm_find_email();
+const char *pwm_find_key_id();
 
 /**
  * Reads a line from stdin.

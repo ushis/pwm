@@ -28,8 +28,8 @@ pwm_find_home(pwm_str_t *s) {
 }
 
 const char *
-pwm_find_email() {
-  return getenv(PWM_EMAIL_ENV_VAR);
+pwm_find_key_id() {
+  return getenv(PWM_KEY_ID_ENV_VAR);
 }
 
 int

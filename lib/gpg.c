@@ -8,7 +8,7 @@ pwm_gpg_init() {
 }
 
 int
-pwm_gpg_new(pwm_gpg_t **out, const char *email) {
+pwm_gpg_new(pwm_gpg_t **out, const char *key_id) {
   gpgme_error_t err;
   pwm_gpg_t *gpg;
 
@@ -22,7 +22,7 @@ pwm_gpg_new(pwm_gpg_t **out, const char *email) {
     goto fail;
   }
 
-  if ((err = gpgme_op_keylist_start(gpg->ctx, email, 1)) > 0) {
+  if ((err = gpgme_op_keylist_start(gpg->ctx, key_id, 1)) > 0) {
     fprintf(stderr, "pwm_db_init_gpg: %s\n", gpgme_strerror(err));
     goto fail;
   }

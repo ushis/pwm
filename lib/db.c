@@ -4,7 +4,7 @@
 #include <string.h>
 
 int
-pwm_db_new(pwm_db_t **out, const char *home, const char *email) {
+pwm_db_new(pwm_db_t **out, const char *home, const char *key_id) {
   pwm_db_t *db;
 
   if ((db = (pwm_db_t *) calloc(1, sizeof(pwm_db_t))) == NULL) {
@@ -16,7 +16,7 @@ pwm_db_new(pwm_db_t **out, const char *home, const char *email) {
     goto fail;
   }
 
-  if (pwm_gpg_new(&db->gpg, email) < 0) {
+  if (pwm_gpg_new(&db->gpg, key_id) < 0) {
     goto fail;
   }
   *out = db;
