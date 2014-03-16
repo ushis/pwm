@@ -1,14 +1,19 @@
+#include "def.h"
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <libgen.h>
+#include <getopt.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-const char *usage_str = "pwm <cmd> [<args>]";
+const char *usage_str = "pwm [<opts>] <cmd> [<args>]\n\n"
+  "options:\n"
+  "  -d <path>       database directory\n"
+  "  -k <key>        gpg key id";
 
 void usage();
 void version();
@@ -31,6 +36,13 @@ const cmd_t cmds[] = {
   {"set",     PWM_EXEC_DIR"/pwm-set",  NULL,    "set a password"},
   {"version", NULL,                    version, "show version"}
 };
+
+typedef struct {
+  char *home;
+  char *key_id;
+} opts_t;
+
+#define OPTS_DEFAULT {NULL,NULL}
 
 void
 usage() {
@@ -81,20 +93,59 @@ cmd_exec(const cmd_t *cmd, char **argv) {
 
 int
 main(int argc, char **argv) {
+  int i;
+  char c;
+  size_t len;
   const cmd_t *cmd;
+  opts_t opts = OPTS_DEFAULT;
 
-  if (argc < 2) {
+  /* find position of the subcommand */
+  for (i = 1; i < argc; i++) {
+    if ((len = strlen(argv[i])) < 2 || argv[i][0] != '-') {
+      break;
+    }
+
+    if (len == 2) {
+      i++;
+    }
+  }
+
+  if (i >= argc) {
     usage();
     exit(EXIT_FAILURE);
   }
 
-  if ((cmd = cmd_find(argv[1])) == NULL) {
+  while ((c = getopt(i, argv, "d:k:")) >= 0) {
+    switch (c) {
+    case 'd':
+      opts.home = optarg;
+      break;
+    case 'k':
+      opts.key_id = optarg;
+      break;
+    default:
+      usage();
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  if (opts.home != NULL && setenv(PWM_HOME_ENV_VAR, opts.home, 1) < 0) {
+    perror("setenv");
+    exit(EXIT_FAILURE);
+  }
+
+  if (opts.key_id != NULL && setenv(PWM_KEY_ID_ENV_VAR, opts.key_id, 1) < 0) {
+    perror("setenv");
+    exit(EXIT_FAILURE);
+  }
+
+  if ((cmd = cmd_find(argv[i])) == NULL) {
     usage();
     exit(EXIT_FAILURE);
   }
 
   if (cmd->bin != NULL) {
-    exit(cmd_exec(cmd, &argv[1]));
+    exit(cmd_exec(cmd, &argv[i]));
   }
   cmd->func();
   exit(EXIT_SUCCESS);

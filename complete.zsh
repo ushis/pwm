@@ -15,7 +15,9 @@ _pwm() {
 
   _arguments \
     '1: :__pwm_commands' \
-    '*:: :__pwm_arguments'
+    '*:: :__pwm_arguments' \
+    '-d+[pwm database directory]:dir:_directories' \
+    '-k+[gpg key id]:key'
 }
 
 __pwm_force() {
