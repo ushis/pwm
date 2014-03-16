@@ -1,31 +1,8 @@
-#include "helper.h"
-#include "def.h"
+#include "read.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <termios.h>
-
-int
-pwm_find_home(pwm_str_t *s) {
-  const char *buf;
-
-  if ((buf = getenv(PWM_HOME_ENV_VAR)) != NULL) {
-    return pwm_str_set(s, buf, strlen(buf));
-  }
-
-  if ((buf = getenv("HOME")) == NULL) {
-    return -1;
-  }
-
-  if (pwm_str_set(s, buf, strlen(buf)) < 0) {
-    return -1;
-  }
-
-  if (pwm_str_append_path_component(s, PWM_HOME_NAME, strlen(PWM_HOME_NAME)) < 0) {
-    return -1;
-  }
-  return 0;
-}
 
 int
 pwm_read_line(pwm_str_t *s, const char *prompt) {

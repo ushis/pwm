@@ -21,7 +21,7 @@ void pwm_git_shutdown();
  * Allocates a new git handler.
  *
  * @param  out   Pointer to store the allocated handler in
- * @param  path  Path to the git repo
+ * @param  path  Optional path to the git repo
  * @return 0 on success or an error code
  */
 int pwm_git_new(pwm_git_t **out, const char *path);

@@ -34,12 +34,7 @@ run(opts_t *opts, const char *key) {
   pwm_db_t *db = NULL;
   PWM_STR_INIT(buf);
 
-  if ((err = pwm_find_home(&buf)) < 0) {
-    fprintf(stderr, "couldn't find the pwm home dir\n");
-    goto cleanup;
-  }
-
-  if ((err = pwm_db_new(&db, buf.buf, NULL)) < 0) {
+  if ((err = pwm_db_new(&db, NULL, NULL)) < 0) {
     goto cleanup;
   }
 

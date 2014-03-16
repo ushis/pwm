@@ -1,15 +1,7 @@
-#ifndef HELPER_H
-#define HELPER_H 1
+#ifndef READ_H
+#define READ_H 1
 
 #include "str.h"
-
-/**
- * Finds the pwm home directory.
- *
- * @param  s  String pointer to store the result in
- * @return 0 on success or an error code
- */
-int pwm_find_home(pwm_str_t *s);
 
 /**
  * Reads a line from stdin.
@@ -29,4 +21,4 @@ int pwm_read_line(pwm_str_t *s, const char *prompt);
  */
 int pwm_read_line_hidden(pwm_str_t *s, const char *prompt);
 
-#endif /* HELPER_H */
+#endif /* READ_H */

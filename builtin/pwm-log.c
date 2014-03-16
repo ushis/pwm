@@ -19,7 +19,7 @@ print_log(int64_t time, const char *name, const char *msg) {
   struct tm *t;
   char buf[40];
 
-  if ((t = localtime(&time)) == NULL) {
+  if ((t = localtime((time_t *) &time)) == NULL) {
     perror("localtime");
     return -1;
   }
@@ -34,22 +34,13 @@ print_log(int64_t time, const char *name, const char *msg) {
 int
 run() {
   int err;
-  pwm_db_t *db = NULL;
-  PWM_STR_INIT(buf);
+  pwm_db_t *db;
 
-  if ((err = pwm_find_home(&buf)) < 0) {
-    fprintf(stderr, "couldn't find the pwm home dir\n");
-    goto cleanup;
-  }
-
-  if ((err = pwm_db_new(&db, buf.buf, NULL)) < 0) {
-    goto cleanup;
+  if ((err = pwm_db_new(&db, NULL, NULL)) < 0) {
+    return err;
   }
   err = pwm_db_log(db, print_log);
-
-cleanup:
   pwm_db_free(db);
-  pwm_str_free(&buf);
   return err;
 }
 

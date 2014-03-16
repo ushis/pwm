@@ -15,7 +15,7 @@ typedef struct {
  * Allocates a new database.
  *
  * @param  out     Pointer to store the allocated database in
- * @param  home    Path to a pwm database
+ * @param  home    Optional path to a pwm database
  * @param  key_id  Optional key id used to determine the GPG recipient
  * @return 0 on success or an error code
  */

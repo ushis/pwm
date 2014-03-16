@@ -21,22 +21,13 @@ print_ln(const char *line) {
 int
 run() {
   int err;
-  pwm_db_t *db = NULL;
-  PWM_STR_INIT(buf);
+  pwm_db_t *db;
 
-  if ((err = pwm_find_home(&buf)) < 0) {
-    fprintf(stderr, "couldn't find the pwm home dir\n");
-    goto cleanup;
-  }
-
-  if ((err = pwm_db_new(&db, buf.buf, NULL)) < 0) {
-    goto cleanup;
+  if ((err = pwm_db_new(&db, NULL, NULL)) < 0) {
+    return err;
   }
   err = pwm_db_list(db, print_ln);
-
-cleanup:
   pwm_db_free(db);
-  pwm_str_free(&buf);
   return err;
 }
 

@@ -1,4 +1,5 @@
 #include "git.h"
+#include "def.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,37 +19,67 @@ pwm_git_shutdown() {
 }
 
 int
+pwm_git_find_home(pwm_str_t *s) {
+  const char *buf;
+
+  if ((buf = getenv(PWM_HOME_ENV_VAR)) != NULL) {
+    return pwm_str_set(s, buf, strlen(buf));
+  }
+
+  if ((buf = getenv("HOME")) == NULL) {
+    return -1;
+  }
+
+  if (pwm_str_set(s, buf, strlen(buf)) < 0) {
+    return -1;
+  }
+  return pwm_str_append_path_component(s, PWM_HOME_NAME, strlen(PWM_HOME_NAME));
+}
+
+int
 pwm_git_open(pwm_git_t *git, const char *path) {
+  int err;
+  PWM_STR_INIT(buf);
   struct stat info;
 
-  if (stat(path, &info) < 0) {
+  if (path == NULL) {
+    if ((err = pwm_git_find_home(&buf)) < 0) {
+      fputs("pwm_git_open: could not find pwm home dir\n", stderr);
+      goto cleanup;
+    }
+    path = buf.buf;
+  }
+
+  if ((err = stat(path, &info)) < 0) {
     if (errno != ENOENT) {
       perror("pwm_git_new: stat");
-      return -1;
+      goto cleanup;
     }
 
-    if (git_repository_init(&git->repo, path, 1) < 0) {
+    if ((err = git_repository_init(&git->repo, path, 1)) < 0) {
       fprintf(stderr, "pwm_git_open: %s\n", giterr_last()->message);
-      return -1;
+      goto cleanup;
     }
 
-    if (chmod(path, 0700) < 0) {
+    if ((err = chmod(path, 0700)) < 0) {
       perror("pwm_git_open: chmod");
-      return -1;
     }
-    return 0;
+    goto cleanup;
   }
 
   if ((info.st_mode&(S_IRWXG|S_IRWXO)) != 0) {
     fprintf(stderr, "pwm_git_open: insecure permissions on: %s\n", path);
-    return -1;
+    err = -1;
+    goto cleanup;
   }
 
-  if (git_repository_open(&git->repo, path) < 0) {
+  if ((err = git_repository_open(&git->repo, path)) < 0) {
     fprintf(stderr, "pwm_git_open: %s\n", giterr_last()->message);
-    return -1;
   }
-  return 0;
+
+cleanup:
+  pwm_str_free(&buf);
+  return err;
 }
 
 int
