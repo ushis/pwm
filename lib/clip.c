@@ -7,7 +7,12 @@
 int
 pwm_clip_set(const pwm_str_t *s) {
   int pid, fd[2], status;
+
+#ifdef __APPLE__
+  char *argv[] = {"pbcopy", "-pboard", "general", NULL};
+#else
   char *argv[] = {"xclip", "-selection", "clipboard", NULL};
+#endif
 
   if (pipe(fd) < 0) {
     perror("pipe");
@@ -20,6 +25,7 @@ pwm_clip_set(const pwm_str_t *s) {
   }
 
   if (pid == 0) {
+
     close(fd[1]);
 
     if (dup2(fd[0], STDIN_FILENO) < 0) {
@@ -27,7 +33,7 @@ pwm_clip_set(const pwm_str_t *s) {
       exit(EXIT_FAILURE);
     }
     execvp(argv[0], argv);
-    perror("execvp: xclip");
+    perror(argv[0]);
     exit(EXIT_FAILURE);
   }
   close(fd[0]);
