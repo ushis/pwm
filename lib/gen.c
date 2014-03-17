@@ -32,62 +32,85 @@ const char *alnum =
 int
 pwm_gen_alnum(pwm_str_t *s, size_t n) {
   size_t i;
-  char buf[n];
 
-  if (pwm_gen_rand(buf, n) < 0) {
+  if (s->cap < n && pwm_str_resize(s, n) < 0) {
+    return -1;
+  }
+
+  if (pwm_gen_rand(s->buf, n) < 0) {
     return -1;
   }
 
   for (i = 0; i < n; i++) {
-    buf[i] = alnum[abs(buf[i])%62];
+    s->buf[i] = alnum[abs(s->buf[i])%62];
   }
-  return pwm_str_set(s, buf, n);
+  s->buf[n] = '\0';
+  s->len = n;
+  return 0;
 }
 
 int
 pwm_gen_ascii(pwm_str_t *s, size_t n) {
   size_t i;
-  char buf[n];
 
-  if (pwm_gen_rand(buf, n) < 0) {
+  if (s->cap < n && pwm_str_resize(s, n) < 0) {
+    return -1;
+  }
+
+  if (pwm_gen_rand(s->buf, n) < 0) {
     return -1;
   }
 
   for (i = 0; i < n; i++) {
-    buf[i] = (abs(buf[i])%('~'-'!'+1))+'!';
+    s->buf[i] = (abs(s->buf[i])%('~'-'!'+1))+'!';
   }
-  return pwm_str_set(s, buf, n);
+  s->buf[n] = '\0';
+  s->len = n;
+  return 0;
 }
 
 int
 pwm_gen_hex(pwm_str_t *s, size_t n) {
+  int err;
+  PWM_STR_INIT(buf);
   size_t len = pwm_hex_decode_len(n+1);
-  char buf[len];
 
-  if (pwm_gen_rand(buf, len) < 0) {
-    return -1;
+  if ((err = pwm_str_resize(&buf, len)) < 0) {
+    goto cleanup;
   }
 
-  if (pwm_str_hex_encode(s, buf, len) < 0) {
-    return -1;
+  if ((err = pwm_gen_rand(buf.buf, len)) < 0) {
+    goto cleanup;
+  }
+
+  if ((err = pwm_str_hex_encode(s, buf.buf, len)) < 0) {
+    goto cleanup;
   }
   pwm_str_shrink(s, n);
-  return 0;
+
+cleanup:
+  pwm_str_free(&buf);
+  return err;
 }
 
 int
 pwm_gen_num(pwm_str_t *s, size_t n) {
   size_t i;
-  char buf[n];
 
-  if (pwm_gen_rand(buf, n) < 0) {
+  if (s->cap < n && pwm_str_resize(s, n) < 0) {
+    return -1;
+  }
+
+  if (pwm_gen_rand(s->buf, n) < 0) {
     return -1;
   }
 
   for (i = 0; i < n; i++) {
-    buf[i] = (abs(buf[i])%10)+'0';
+    s->buf[i] = (abs(s->buf[i])%10)+'0';
   }
-  return pwm_str_set(s, buf, n);
+  s->buf[n] = '\0';
+  s->len = n;
+  return 0;
 }
 
 const pwm_gen_t gens[] = {

@@ -20,10 +20,10 @@ pwm_read_line_hidden(pwm_str_t *s, const char *prompt) {
     return -1;
   }
   new_attr = old_attr;
-  new_attr.c_lflag &= ~ECHO;
+  new_attr.c_lflag &= ~(ICANON|ECHO);
 
   if (tcsetattr(0, TCSAFLUSH, &new_attr) < 0) {
-    perror("pwm_read_line: tcgetattr");
+    perror("pwm_read_line: tcsetattr");
     return -1;
   }
   err = pwm_read_line(s, prompt);

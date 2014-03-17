@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/mman.h>
 
 int
 pwm_str_resize(pwm_str_t *s, size_t cap) {
@@ -15,6 +16,11 @@ pwm_str_resize(pwm_str_t *s, size_t cap) {
   s->buf = buf;
   s->cap = cap;
   pwm_str_shrink(s, cap);
+
+  if (mlock(s->buf, (cap+1)*sizeof(char)) < 0) {
+    perror("pwm_str_resize: mlock");
+    return -1;
+  }
   return 0;
 }
 

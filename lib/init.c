@@ -2,18 +2,11 @@
 #include "gpg.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/mman.h>
 #include <sys/resource.h>
 
 void
 pwm_init() {
   struct rlimit zero = {0, 0};
-
-  /* lock all memory */
-  if (mlockall(MCL_FUTURE) < 0) {
-    perror("mlockall");
-    exit(EXIT_FAILURE);
-  }
 
   /* disable coredumps */
   if (setrlimit(RLIMIT_CORE, &zero) < 0) {
