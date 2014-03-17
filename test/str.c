@@ -106,21 +106,22 @@ END_TEST
 
 START_TEST(test_pwm_str_read_all) {
   pid_t pid;
-  int fd[2];
+  int fd[2], rc;
   PWM_STR_INIT(buf);
   ck_assert_int_eq(pipe(fd), 0);
   ck_assert_int_ge((pid = fork()), 0);
 
   if (pid == 0) {
     close(fd[0]);
-    write(fd[1], "Hello World", 11);
+    rc = write(fd[1], "Hello World", 11);
     close(fd[1]);
-    exit(0);
+    exit(rc < 0);
   }
   ck_assert_int_eq(close(fd[1]), 0);
   ck_assert_int_eq(pwm_str_read_all(&buf, fd[0]), 0);
   ck_assert_int_eq(close(fd[0]), 0);
-  ck_assert_int_ge(waitpid(pid, NULL, 0), 0);
+  ck_assert_int_ge(waitpid(pid, &rc, 0), 0);
+  ck_assert(WIFEXITED(rc) && WEXITSTATUS(rc) == 0);
   ck_assert_str_eq(buf.buf, "Hello World");
   pwm_str_free(&buf);
 }
@@ -128,7 +129,7 @@ END_TEST
 
 START_TEST(test_pwm_str_read_line) {
   pid_t pid;
-  int fd[2];
+  int fd[2], rc;
   FILE *stream;
   PWM_STR_INIT(buf);
   ck_assert_int_eq(pipe(fd), 0);
@@ -136,15 +137,16 @@ START_TEST(test_pwm_str_read_line) {
 
   if (pid == 0) {
     close(fd[0]);
-    write(fd[1], "Hello World\nthis is data from outer space\n", 42);
+    rc = write(fd[1], "Hello World\nthis is data from outer space\n", 42);
     close(fd[1]);
-    exit(0);
+    exit(rc < 0);
   }
   ck_assert_int_eq(close(fd[1]), 0);
   ck_assert((stream = fdopen(fd[0], "r")) != NULL);
   ck_assert_int_eq(pwm_str_read_line(&buf, stream), 0);
   ck_assert_int_eq(fclose(stream), 0);
-  ck_assert_int_ge(waitpid(pid, NULL, 0), 0);
+  ck_assert_int_ge(waitpid(pid, &rc, 0), 0);
+  ck_assert(WIFEXITED(rc) && WEXITSTATUS(rc) == 0);
   ck_assert_str_eq(buf.buf, "Hello World");
   pwm_str_free(&buf);
 }

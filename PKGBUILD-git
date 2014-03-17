@@ -8,6 +8,7 @@ url="github.com/ushis/pwm"
 license=('GPL')
 depends=('libgit2' 'gpgme')
 optdepends=('xclip: clipboard support')
+checkdepends=('check')
 provides=('pwm')
 conflicts=('pwm')
 source=('pwm::git+https://github.com/ushis/pwm.git#branch=master')
@@ -23,6 +24,11 @@ build() {
   autoconf -o configure configure.ac
   ./configure --prefix=/usr --with-pwmexecdir=/usr/lib/pwm
   make
+}
+
+check() {
+  cd "${srcdir}/pwm"
+  make test
 }
 
 package() {
