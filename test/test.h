@@ -5,5 +5,6 @@
 
 Suite *pwm_gen_suite();
 Suite *pwm_hex_suite();
+Suite *pwm_str_suite();
 
 #endif /* TEST_H */

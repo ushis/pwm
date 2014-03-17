@@ -19,14 +19,14 @@ END_TEST
 START_TEST(test_pwm_hex_encode) {
   char buf[20];
   ck_assert_int_eq(pwm_hex_encode(&buf[0], &raw[0], 10), 20);
-  ck_assert(memcmp(&buf[0], hex, 20) == 0);
+  ck_assert_int_eq(memcmp(&buf[0], hex, 20), 0);
 }
 END_TEST
 
 START_TEST(test_pwm_hex_decode) {
   char buf[10];
   ck_assert_int_eq(pwm_hex_decode(&buf[0], hex, 20), 10);
-  ck_assert(memcmp(&buf[0], &raw[0], 10) == 0);
+  ck_assert_int_eq(memcmp(&buf[0], &raw[0], 10), 0);
 }
 END_TEST
 
