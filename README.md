@@ -44,6 +44,9 @@ To install pwm make sure you have installed the dependencies:
 When building from the git repo you need
 [autoconf](https://www.gnu.org/software/autoconf) in addition.
 
+If you want to run unit tests you need the
+[Check Unit Testing Framework](http://check.sourceforge.net/).
+
 ### Get the Source
 
 Download a release tarball or clone the repo:
