@@ -11,6 +11,7 @@
 /config.h
 /configure
 /autom4te.cache
+/test/test
 
 # bin
 pwm

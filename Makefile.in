@@ -2,6 +2,10 @@ LIBSRC := $(wildcard lib/*.c)
 LIBOBJ := $(patsubst %.c,%.o,$(LIBSRC))
 LIBARC := lib/pwm.a
 
+TESTSRC := $(wildcard test/*.c)
+TESTOBJ := $(patsubst %.c,%.o,$(TESTSRC))
+TESTBIN := test/test
+
 BUILTINSRC := $(wildcard builtin/*.c)
 BUILTINOBJ := $(patsubst %.c,%.o,$(BUILTINSRC))
 BUILTINBIN := $(patsubst %.o,%,$(BUILTINOBJ))
@@ -9,12 +13,15 @@ BUILTINBIN := $(patsubst %.o,%,$(BUILTINOBJ))
 SRC := pwm.c
 BIN := $(patsubst %.c,%,$(SRC))
 
-BINDIR     := @prefix@/bin
-PWMEXECDIR := @pwmexecdir@
-
 CPPFLAGS += -D_BSD_SOURCE
 CFLAGS += -std=c99 -Wall -O2 -Ilib
 LDFLAGS += -lgpgme -lgit2
+
+TESTCFLAGS = $(CFLAGS) -Itest
+TESTLDFLAGS = $(LDFLAGS) -lcheck
+
+BINDIR     := @prefix@/bin
+PWMEXECDIR := @pwmexecdir@
 
 .PHONY: all
 all: $(BIN) $(BUILTINBIN)
@@ -34,6 +41,16 @@ $(LIBARC): $(LIBOBJ)
 $(LIBOBJ): %.o: %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $^
 
+.PHONY: test
+test: $(TESTBIN)
+	$(TESTBIN)
+
+$(TESTBIN): $(TESTOBJ) $(LIBARC)
+	$(CC) $(TESTLDFLAGS) -o $@ $^
+
+$(TESTOBJ): %.o: %.c
+	$(CC) $(TESTCFLAGS) $(CPPFLAGS) -c -o $@ $^
+
 .PHONY: doc
 doc:
 	cm doc docurium.json
@@ -46,4 +63,4 @@ install:
 
 .PHONY: clean
 clean:
-	rm -f $(LIBOBJ) $(LIBARC) $(BUILTINOBJ) $(BUILTINBIN) $(BIN)
+	rm -f $(LIBOBJ) $(LIBARC) $(TESTOBJ) $(TESTBIN) $(BUILTINOBJ) $(BUILTINBIN) $(BIN)
