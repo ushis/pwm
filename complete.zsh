@@ -17,7 +17,9 @@ _pwm() {
     '1: :__pwm_commands' \
     '*:: :__pwm_arguments' \
     '-d+[pwm database directory]:dir:_directories' \
-    '-k+[gpg key id]:key'
+    '-h[show help]' \
+    '-k+[gpg key id]:key' \
+    '-v[show version]'
 }
 
 __pwm_force() {
@@ -39,12 +41,10 @@ __pwm_commands() {
     'del[delete a password]' \
     'gen[generate a password]' \
     'get[retrieve a password]' \
-    'help[show help]' \
     'list[list all passwords]' \
     'log[print the log]' \
     'note[get, set or delete a password note]' \
-    'set[set a password]' \
-    'version[show pwm version]'
+    'set[set a password]'
 }
 
 __pwm_arguments() {

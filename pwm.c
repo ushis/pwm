@@ -10,31 +10,28 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-const char *usage_str = "pwm [<opts>] <cmd> [<args>]\n\n"
+const char *usage_str =
+  "pwm [<opts>] <cmd> [<args>]\n\n"
   "options:\n"
   "  -d <path>       database directory\n"
-  "  -k <key>        gpg key id";
-
-void usage();
-void version();
+  "  -h              show this help\n"
+  "  -k <key>        gpg key id\n"
+  "  -v              show version";
 
 typedef struct {
   char *cmd;
   char *bin;
-  void (*func)();
   char *help;
 } cmd_t;
 
 const cmd_t cmds[] = {
-  {"del",     PACKAGE_EXEC_DIR"/pwm-del",  NULL,    "delete a password"},
-  {"gen",     PACKAGE_EXEC_DIR"/pwm-gen",  NULL,    "generate a password"},
-  {"get",     PACKAGE_EXEC_DIR"/pwm-get",  NULL,    "retrieve a password"},
-  {"help",    NULL,                        usage,   "show this help"},
-  {"list",    PACKAGE_EXEC_DIR"/pwm-list", NULL,    "list all passwords"},
-  {"log",     PACKAGE_EXEC_DIR"/pwm-log",  NULL,    "print the log"},
-  {"note",    PACKAGE_EXEC_DIR"/pwm-note", NULL,    "get, set or del a password note"},
-  {"set",     PACKAGE_EXEC_DIR"/pwm-set",  NULL,    "set a password"},
-  {"version", NULL,                        version, "show version"}
+  {"del",  PACKAGE_EXEC_DIR"/pwm-del",  "delete a password"},
+  {"gen",  PACKAGE_EXEC_DIR"/pwm-gen",  "generate a password"},
+  {"get",  PACKAGE_EXEC_DIR"/pwm-get",  "retrieve a password"},
+  {"list", PACKAGE_EXEC_DIR"/pwm-list", "list all passwords"},
+  {"log",  PACKAGE_EXEC_DIR"/pwm-log",  "print the log"},
+  {"note", PACKAGE_EXEC_DIR"/pwm-note", "get, set or del a password note"},
+  {"set",  PACKAGE_EXEC_DIR"/pwm-set",  "set a password"}
 };
 
 typedef struct {
@@ -53,11 +50,13 @@ usage() {
   for (i = 0; i < (sizeof(cmds)/sizeof(cmd_t)); i++) {
     fprintf(stderr, "  %-14s  %s\n", cmds[i].cmd, cmds[i].help);
   }
+  exit(EXIT_FAILURE);
 }
 
 void
 version() {
   fprintf(stderr, "pwm %s\n", PACKAGE_VERSION);
+  exit(EXIT_SUCCESS);
 }
 
 const cmd_t *
@@ -109,18 +108,14 @@ main(int argc, char **argv) {
     if ((len = strlen(argv[i])) < 2 || argv[i][0] != '-') {
       break;
     }
+    c = argv[i][1];
 
-    if (len == 2) {
+    if (len == 2 && c != 'h' && c != 'v') {
       i++;
     }
   }
 
-  if (i >= argc) {
-    usage();
-    exit(EXIT_FAILURE);
-  }
-
-  while ((c = getopt(i, argv, "d:k:")) >= 0) {
+  while ((c = getopt(i, argv, "d:hk:v")) >= 0) {
     switch (c) {
     case 'd':
       opts.home = optarg;
@@ -128,10 +123,16 @@ main(int argc, char **argv) {
     case 'k':
       opts.key_id = optarg;
       break;
+    case 'v':
+      version();
+      break;
     default:
       usage();
-      exit(EXIT_FAILURE);
     }
+  }
+
+  if (i >= argc) {
+    usage();
   }
 
   if (opts.home != NULL && setenv(PWM_HOME_ENV_VAR, opts.home, 1) < 0) {
@@ -148,10 +149,5 @@ main(int argc, char **argv) {
     usage();
     exit(EXIT_FAILURE);
   }
-
-  if (cmd->bin != NULL) {
-    exit(cmd_exec(cmd, &argv[i]));
-  }
-  cmd->func();
-  exit(EXIT_SUCCESS);
+  exit(cmd_exec(cmd, &argv[i]));
 }

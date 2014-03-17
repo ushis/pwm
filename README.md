@@ -9,18 +9,18 @@ pwm is a password manager using [GnuPG](http://www.gnupg.org) to encrypt and
 
     options:
       -d <path>       database directory
+      -h              show this help
       -k <key>        gpg key id
+      -v              show version
 
     commands:
       del             delete a password
       gen             generate a password
       get             retrieve a password
-      help            show this help
       list            list all passwords
       log             print the log
       note            get, set or del a password note
       set             set a password
-      version         show version
 
 pwm creates a bare git repository at ```~/.pwm```. You can change that
 behaviour by using the ```-d``` option or setting the environment
