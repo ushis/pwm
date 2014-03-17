@@ -6,13 +6,8 @@
 
 int
 pwm_clip_set(const pwm_str_t *s) {
-  int pid, fd[2], status;
-
-#ifdef __APPLE__
-  char *argv[] = {"pbcopy", "-pboard", "general", NULL};
-#else
-  char *argv[] = {"xclip", "-selection", "clipboard", NULL};
-#endif
+  pid_t pid;
+  int fd[2], rc;
 
   if (pipe(fd) < 0) {
     perror("pipe");
@@ -25,6 +20,11 @@ pwm_clip_set(const pwm_str_t *s) {
   }
 
   if (pid == 0) {
+#ifdef __APPLE__
+    char *argv[] = {"pbcopy", "-pboard", "general", NULL};
+#else
+    char *argv[] = {"xclip", "-selection", "clipboard", NULL};
+#endif
 
     close(fd[1]);
 
@@ -45,11 +45,11 @@ pwm_clip_set(const pwm_str_t *s) {
   }
   close(fd[1]);
 
-  if (waitpid(pid, &status, 0) < 0) {
+  if (waitpid(pid, &rc, 0) < 0) {
     perror("waitpid");
     return -1;
   }
-  return (WIFEXITED(status) && WEXITSTATUS(status) == 0) ? 0 : -1;
+  return (WIFEXITED(rc) && WEXITSTATUS(rc) == 0) ? 0 : -1;
 }
 
 int

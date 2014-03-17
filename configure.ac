@@ -21,10 +21,11 @@ AC_TYPE_SSIZE_T
 # Checks for library functions.
 AC_FUNC_FORK
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([dup2 setenv mlockall])
+AC_CHECK_FUNCS([dup2 setenv])
 
 # PACKAGE_EXEC_DIR
-AH_VERBATIM([PACKAGE_EXEC_DIR], [#undef PACKAGE_EXEC_DIR])
+AH_TEMPLATE([PACKAGE_EXEC_DIR],
+  [Define to the directoy containing the builtin binaries])
 
 AC_ARG_WITH([pwmexecdir],
   AS_HELP_STRING([--with-pwmexecdir=dir],

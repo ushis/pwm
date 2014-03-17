@@ -74,7 +74,8 @@ cmd_find(const char *cmd) {
 
 int
 cmd_exec(const cmd_t *cmd, char **argv) {
-  int pid, rc;
+  pid_t pid;
+  int rc;
 
   if ((pid = fork()) < 0) {
     perror("fork");
@@ -87,7 +88,11 @@ cmd_exec(const cmd_t *cmd, char **argv) {
     perror("execv");
     exit(EXIT_FAILURE);
   }
-  waitpid(pid, &rc, 0);
+
+  if (waitpid(pid, &rc, 0) < 0) {
+    perror("waitpid");
+    return 1;
+  }
   return WIFEXITED(rc) ? WEXITSTATUS(rc) : 1;
 }
 

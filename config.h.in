@@ -21,9 +21,6 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define to 1 if you have the `mlockall' function. */
-#undef HAVE_MLOCKALL
-
 /* Define to 1 if your system has a GNU libc compatible `realloc' function,
    and to 0 otherwise. */
 #undef HAVE_REALLOC
@@ -70,6 +67,7 @@
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 
+/* Define to the directoy containing the builtin binaries */
 #undef PACKAGE_EXEC_DIR
 
 /* Define to the full name of this package. */
