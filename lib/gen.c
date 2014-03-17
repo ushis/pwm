@@ -8,21 +8,27 @@
 #include <sys/stat.h>
 
 int
-pwm_gen_rand(char *buf, size_t n) {
+pwm_gen_rand(pwm_str_t *s, size_t n) {
   ssize_t m;
   int fd;
+
+  if (s->cap < n && pwm_str_resize(s, n) < 0) {
+    return -1;
+  }
 
   if ((fd = open("/dev/urandom", O_RDONLY)) < 0) {
     perror("pwm_gen_rand: open");
     return -1;
   }
-  m = read(fd, buf, n);
+  m = read(fd, s->buf, n);
   close(fd);
 
   if (m < n) {
     fprintf(stderr, "pwm_gen_rand: urandom is broken\n");
     return -1;
   }
+  s->buf[n] = '\0';
+  s->len = n;
   return 0;
 }
 
@@ -33,19 +39,13 @@ int
 pwm_gen_alnum(pwm_str_t *s, size_t n) {
   size_t i;
 
-  if (s->cap < n && pwm_str_resize(s, n) < 0) {
-    return -1;
-  }
-
-  if (pwm_gen_rand(s->buf, n) < 0) {
+  if (pwm_gen_rand(s, n) < 0) {
     return -1;
   }
 
   for (i = 0; i < n; i++) {
     s->buf[i] = alnum[abs(s->buf[i])%62];
   }
-  s->buf[n] = '\0';
-  s->len = n;
   return 0;
 }
 
@@ -53,19 +53,13 @@ int
 pwm_gen_ascii(pwm_str_t *s, size_t n) {
   size_t i;
 
-  if (s->cap < n && pwm_str_resize(s, n) < 0) {
-    return -1;
-  }
-
-  if (pwm_gen_rand(s->buf, n) < 0) {
+  if (pwm_gen_rand(s, n) < 0) {
     return -1;
   }
 
   for (i = 0; i < n; i++) {
     s->buf[i] = (abs(s->buf[i])%('~'-'!'+1))+'!';
   }
-  s->buf[n] = '\0';
-  s->len = n;
   return 0;
 }
 
@@ -75,11 +69,7 @@ pwm_gen_hex(pwm_str_t *s, size_t n) {
   PWM_STR_INIT(buf);
   size_t len = pwm_hex_decode_len(n+1);
 
-  if ((err = pwm_str_resize(&buf, len)) < 0) {
-    goto cleanup;
-  }
-
-  if ((err = pwm_gen_rand(buf.buf, len)) < 0) {
+  if ((err = pwm_gen_rand(&buf, len)) < 0) {
     goto cleanup;
   }
 
@@ -97,19 +87,13 @@ int
 pwm_gen_num(pwm_str_t *s, size_t n) {
   size_t i;
 
-  if (s->cap < n && pwm_str_resize(s, n) < 0) {
-    return -1;
-  }
-
-  if (pwm_gen_rand(s->buf, n) < 0) {
+  if (pwm_gen_rand(s, n) < 0) {
     return -1;
   }
 
   for (i = 0; i < n; i++) {
     s->buf[i] = (abs(s->buf[i])%10)+'0';
   }
-  s->buf[n] = '\0';
-  s->len = n;
   return 0;
 }
 
