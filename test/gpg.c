@@ -68,8 +68,7 @@ START_TEST(test_pwm_gpg_encrypt_armor) {
   ck_assert_int_eq(pwm_gpg_encrypt_armor(gpg, &b, &a), 0);
   ck_assert_int_eq(pwm_gpg_decrypt(gpg, &c, &b), 0);
   ck_assert_int_eq(pwm_str_cmp(&a, &c), 0);
-  pwm_str_shrink(&b, 28);
-  ck_assert_str_eq(b.buf, "-----BEGIN PGP MESSAGE-----\n");
+  ck_assert_int_eq(memcmp(b.buf, "-----BEGIN PGP MESSAGE-----\n", 28), 0);
   pwm_str_free(&c);
   pwm_str_free(&b);
   pwm_str_free(&a);

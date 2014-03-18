@@ -158,7 +158,7 @@ static const char *hex = "deadbeef00ac312266ab";
 
 START_TEST(test_pwm_str_hex_encode) {
   PWM_STR_INIT(buf);
-  ck_assert_int_eq(pwm_str_hex_encode(&buf, &raw[0], 10), 0);
+  ck_assert_int_eq(pwm_str_hex_encode(&buf, raw, 10), 0);
   ck_assert_str_eq(buf.buf, hex);
   pwm_str_free(&buf);
 }
@@ -168,7 +168,7 @@ START_TEST(test_pwm_str_hex_decode) {
   PWM_STR_INIT(buf);
   ck_assert_int_eq(pwm_str_hex_decode(&buf, hex, 20), 0);
   ck_assert_int_eq(buf.len, 10);
-  ck_assert_int_eq(memcmp(buf.buf, &raw[0], 10), 0);
+  ck_assert_int_eq(memcmp(buf.buf, raw, 10), 0);
   ck_assert_int_lt(pwm_str_hex_decode(&buf, hex, 19), 0);
   ck_assert_int_lt(pwm_str_hex_decode(&buf, "ac67dez8a8", 10), 0);
   pwm_str_free(&buf);
