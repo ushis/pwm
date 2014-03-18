@@ -84,7 +84,7 @@ pwm_str_shrink(pwm_str_t *s, size_t n) {
   }
 }
 
-size_t
+static size_t
 pwm_str_min_len(pwm_str_t *a, pwm_str_t *b) {
   return (a->len < b->len) ? a->len : b->len;
 }

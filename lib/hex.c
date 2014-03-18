@@ -24,7 +24,7 @@ pwm_hex_encode(char *dst, const char *src, size_t len) {
   return 2 * i;
 }
 
-signed char
+static signed char
 pwm_hex_decode_char(char c) {
   if ('0' <= c && c <= '9') {
     return c - '0';

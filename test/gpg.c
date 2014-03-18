@@ -7,7 +7,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-void
+static void
 pwm_gpg_setup(pwm_gpg_t **gpg) {
   pwm_gpg_init();
   ck_assert_int_eq(setenv("GNUPGHOME", "test/gnupg", 1), 0);

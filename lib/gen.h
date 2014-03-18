@@ -12,6 +12,15 @@ typedef struct {
 } pwm_gen_t;
 
 /**
+ * Generates random data.
+ *
+ * @param  s  String pointer to store the result in
+ * @param  n  Length of the result
+ * @return 0 on success or an error code
+ */
+int pwm_gen_rand(pwm_str_t *s, size_t n);
+
+/**
  * Generates a random alphanumeric string.
  *
  * @param  s  String pointer to store the result in

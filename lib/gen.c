@@ -32,7 +32,7 @@ pwm_gen_rand(pwm_str_t *s, size_t n) {
   return 0;
 }
 
-const char *alnum =
+static const char *alnum =
   "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 int
@@ -97,7 +97,7 @@ pwm_gen_num(pwm_str_t *s, size_t n) {
   return 0;
 }
 
-const pwm_gen_t gens[] = {
+static const pwm_gen_t gens[] = {
   {"alnum", "random alphanumeric characters",    pwm_gen_alnum},
   {"ascii", "random printable ascii characters", pwm_gen_ascii},
   {"hex",   "random hex",                        pwm_gen_hex},

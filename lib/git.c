@@ -18,7 +18,7 @@ pwm_git_shutdown() {
   git_threads_shutdown();
 }
 
-int
+static int
 pwm_git_find_home(pwm_str_t *s) {
   const char *buf;
 
@@ -36,7 +36,7 @@ pwm_git_find_home(pwm_str_t *s) {
   return pwm_str_append_path_component(s, PWM_HOME_NAME, strlen(PWM_HOME_NAME));
 }
 
-int
+static int
 pwm_git_open(pwm_git_t *git, const char *path) {
   int err;
   PWM_STR_INIT(buf);
@@ -256,7 +256,7 @@ cleanup:
   return err;
 }
 
-int
+static int
 pwm_git_head(pwm_git_t *git, git_commit **commit) {
   return git_revparse_single((git_object **) commit, git->repo, "HEAD");
 }
@@ -285,7 +285,7 @@ pwm_git_commit(pwm_git_t *git, const char *msg) {
   return err;
 }
 
-const git_oid *
+static const git_oid *
 pwm_git_entry_id(pwm_git_t *git, const char *path) {
   const git_tree_entry *entry;
 
@@ -351,7 +351,7 @@ pwm_git_note_rm(pwm_git_t *git, const char *path) {
   return 0;
 }
 
-int
+static int
 pwm_git_walk_cb(const char *root, const git_tree_entry *entry, void *cb) {
   return ((pwm_git_walk_entries_cb) cb)(git_tree_entry_name(entry));
 }
