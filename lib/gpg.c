@@ -19,7 +19,7 @@ pwm_gpg_new(pwm_gpg_t **out, const char *key_id) {
   }
 
   if ((err = gpgme_new(&gpg->ctx)) > 0) {
-    fprintf(stderr, "pwm_db_init_gpg: %s\n", gpgme_strerror(err));
+    fprintf(stderr, "pwm_gpg_new: %s\n", gpgme_strerror(err));
     goto fail;
   }
 
@@ -28,15 +28,20 @@ pwm_gpg_new(pwm_gpg_t **out, const char *key_id) {
   }
 
   if ((err = gpgme_op_keylist_start(gpg->ctx, key_id, 1)) > 0) {
-    fprintf(stderr, "pwm_db_init_gpg: %s\n", gpgme_strerror(err));
+    fprintf(stderr, "pwm_gpg_new: %s\n", gpgme_strerror(err));
     goto fail;
   }
 
   if ((err = gpgme_op_keylist_next(gpg->ctx, &gpg->keys[0])) > 0) {
-    fprintf(stderr, "pwm_db_init_gpg: %s\n", gpgme_strerror(err));
+    fprintf(stderr, "pwm_gpg_new: %s\n", gpgme_strerror(err));
     goto fail;
   }
   gpg->keys[1] = NULL;
+
+  if ((err = gpgme_op_keylist_end(gpg->ctx)) > 0) {
+    fprintf(stderr, "pwm_gpg_new: %s\n", gpgme_strerror(err));
+    goto fail;
+  }
   *out = gpg;
   return 0;
 
