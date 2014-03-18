@@ -10,7 +10,11 @@ typedef struct {
   gpgme_key_t keys[2];
 } pwm_gpg_t;
 
-/** Initializes GPG. Do not call this directly - use pwm_init(). */
+/**
+ * Initializes GPG. Do not call this directly - use pwm_init().
+ *
+ * @return 0 on success or an error code
+ */
 int pwm_gpg_init();
 
 /**

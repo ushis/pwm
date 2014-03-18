@@ -11,7 +11,11 @@ typedef struct {
   git_tree *tree;
 } pwm_git_t;
 
-/** Initializes git. Do not call this directly - use pwm_init(). */
+/**
+ * Initializes git. Do not call this directly - use pwm_init().
+ *
+ * @return 0 on success or an error code
+ */
 int pwm_git_init();
 
 /** Shuts down git */
