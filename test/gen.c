@@ -3,6 +3,19 @@
 #include <check.h>
 #include <ctype.h>
 
+START_TEST(test_pwm_gen_rand) {
+  PWM_STR_INIT(a);
+  PWM_STR_INIT(b);
+  ck_assert_int_eq(pwm_gen_rand(&a, 4<<10), 0);
+  ck_assert_int_eq(pwm_gen_rand(&b, 4<<10), 0);
+  ck_assert_int_eq(a.len, 4<<10);
+  ck_assert_int_eq(b.len, 4<<10);
+  ck_assert_int_ne(pwm_str_cmp(&a, &b), 0);
+  pwm_str_free(&b);
+  pwm_str_free(&a);
+}
+END_TEST
+
 START_TEST(test_pwm_gen_alnum) {
   size_t i;
   PWM_STR_INIT(buf);
@@ -70,6 +83,7 @@ Suite *
 pwm_gen_suite() {
   Suite *s = suite_create("pwm_gen");
   TCase *tc_core = tcase_create("core");
+  tcase_add_test(tc_core, test_pwm_gen_rand);
   tcase_add_test(tc_core, test_pwm_gen_alnum);
   tcase_add_test(tc_core, test_pwm_gen_ascii);
   tcase_add_test(tc_core, test_pwm_gen_hex);

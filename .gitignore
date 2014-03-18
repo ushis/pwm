@@ -12,6 +12,7 @@
 /configure
 /autom4te.cache
 /test/test
+/test/gnupg/random_seed
 
 # bin
 pwm
