@@ -8,7 +8,7 @@
 #include <sys/types.h>
 
 static void
-pwm_gpg_setup(pwm_gpg_t **gpg) {
+setup(pwm_gpg_t **gpg) {
   pwm_gpg_init();
   ck_assert_int_eq(setenv("GNUPGHOME", "test/gnupg", 1), 0);
   ck_assert_int_eq(unsetenv("PWM_KEY"), 0);
@@ -20,7 +20,7 @@ START_TEST(test_pwm_gpg_decrypt) {
   pwm_gpg_t *gpg;
   PWM_STR_INIT(a);
   PWM_STR_INIT(b);
-  pwm_gpg_setup(&gpg);
+  setup(&gpg);
   ck_assert_int_ge((fd = open("test/data/slipsum.txt.gpg", O_RDONLY)), 0);
   ck_assert_int_eq(pwm_str_read_all(&a, fd), 0);
   ck_assert_int_eq(close(fd), 0);
@@ -41,7 +41,7 @@ START_TEST(test_pwm_gpg_encrypt) {
   PWM_STR_INIT(a);
   PWM_STR_INIT(b);
   PWM_STR_INIT(c);
-  pwm_gpg_setup(&gpg);
+  setup(&gpg);
   ck_assert_int_ge((fd = open("test/data/slipsum.txt", O_RDONLY)), 0);
   ck_assert_int_eq(pwm_str_read_all(&a, fd), 0);
   ck_assert_int_eq(close(fd), 0);
@@ -61,7 +61,7 @@ START_TEST(test_pwm_gpg_encrypt_armor) {
   PWM_STR_INIT(a);
   PWM_STR_INIT(b);
   PWM_STR_INIT(c);
-  pwm_gpg_setup(&gpg);
+  setup(&gpg);
   ck_assert_int_ge((fd = open("test/data/slipsum.txt", O_RDONLY)), 0);
   ck_assert_int_eq(pwm_str_read_all(&a, fd), 0);
   ck_assert_int_eq(close(fd), 0);

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 Suite *pwm_gen_suite();
+Suite *pwm_git_suite();
 Suite *pwm_gpg_suite();
 Suite *pwm_hex_suite();
 Suite *pwm_str_suite();
@@ -11,6 +12,7 @@ main() {
   int failed;
   SRunner *sr = srunner_create(NULL);
   srunner_add_suite(sr, pwm_gen_suite());
+  srunner_add_suite(sr, pwm_git_suite());
   srunner_add_suite(sr, pwm_gpg_suite());
   srunner_add_suite(sr, pwm_hex_suite());
   srunner_add_suite(sr, pwm_str_suite());

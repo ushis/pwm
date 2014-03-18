@@ -12,6 +12,7 @@
 /configure
 /autom4te.cache
 /test/test
+/test/git
 /test/gnupg/random_seed
 
 # bin

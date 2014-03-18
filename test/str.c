@@ -52,15 +52,13 @@ START_TEST(test_pwm_str_set) {
 END_TEST
 
 START_TEST(test_pwm_str_append) {
-  size_t i;
   PWM_STR_INIT(buf);
   ck_assert_int_eq(pwm_str_append(&buf, sample, sample_len), 0);
   ck_assert_int_eq(buf.len, sample_len);
   ck_assert_int_eq(pwm_str_append(&buf, sample, sample_len), 0);
   ck_assert_int_eq(buf.len, 2*sample_len);
-  i = buf.len/2;
-  ck_assert_int_eq(memcmp(buf.buf, sample, i), 0);
-  ck_assert_int_eq(memcmp(&buf.buf[i], sample, i), 0);
+  ck_assert_int_eq(memcmp(buf.buf, sample, sample_len), 0);
+  ck_assert_int_eq(memcmp(&buf.buf[sample_len], sample, sample_len), 0);
   pwm_str_free(&buf);
 }
 END_TEST

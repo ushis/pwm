@@ -168,7 +168,7 @@ pwm_git_get(pwm_git_t *git, const char *path, pwm_str_t *s) {
   int err;
 
   if ((entry = git_tree_entry_byname(git->tree, path)) == NULL) {
-    fprintf(stderr, "pwm_git_get: %s\n", giterr_last()->message);
+    fprintf(stderr, "pwm_git_get: entry not found: %s\n", path);
     return -1;
   }
 
