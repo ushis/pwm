@@ -76,13 +76,11 @@ START_TEST(test_pwm_gpg_encrypt_armor) {
 }
 END_TEST
 
-Suite *
-pwm_gpg_suite() {
-  Suite *s = suite_create("pwm_gpg");
-  TCase *tc_core = tcase_create("core");
-  tcase_add_test(tc_core, test_pwm_gpg_decrypt);
-  tcase_add_test(tc_core, test_pwm_gpg_encrypt);
-  tcase_add_test(tc_core, test_pwm_gpg_encrypt_armor);
-  suite_add_tcase(s, tc_core);
-  return s;
+TCase *
+pwm_gpg_tests() {
+  TCase *tc = tcase_create("gpg");
+  tcase_add_test(tc, test_pwm_gpg_decrypt);
+  tcase_add_test(tc, test_pwm_gpg_encrypt);
+  tcase_add_test(tc, test_pwm_gpg_encrypt_armor);
+  return tc;
 }

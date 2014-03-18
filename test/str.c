@@ -173,22 +173,20 @@ START_TEST(test_pwm_str_hex_decode) {
 }
 END_TEST
 
-Suite *
-pwm_str_suite() {
-  Suite *s = suite_create("pwm_str");
-  TCase *tc_core = tcase_create("core");
-  tcase_add_test(tc_core, test_pwm_str_init);
-  tcase_add_test(tc_core, test_pwm_str_resize);
-  tcase_add_test(tc_core, test_pwm_str_cpy);
-  tcase_add_test(tc_core, test_pwm_str_set);
-  tcase_add_test(tc_core, test_pwm_str_append);
-  tcase_add_test(tc_core, test_pwm_str_append_path_component);
-  tcase_add_test(tc_core, test_pwm_str_shrink);
-  tcase_add_test(tc_core, test_pwm_str_cmp);
-  tcase_add_test(tc_core, test_pwm_str_read_all);
-  tcase_add_test(tc_core, test_pwm_str_read_line);
-  tcase_add_test(tc_core, test_pwm_str_hex_encode);
-  tcase_add_test(tc_core, test_pwm_str_hex_decode);
-  suite_add_tcase(s, tc_core);
-  return s;
+TCase *
+pwm_str_tests() {
+  TCase *tc = tcase_create("str");
+  tcase_add_test(tc, test_pwm_str_init);
+  tcase_add_test(tc, test_pwm_str_resize);
+  tcase_add_test(tc, test_pwm_str_cpy);
+  tcase_add_test(tc, test_pwm_str_set);
+  tcase_add_test(tc, test_pwm_str_append);
+  tcase_add_test(tc, test_pwm_str_append_path_component);
+  tcase_add_test(tc, test_pwm_str_shrink);
+  tcase_add_test(tc, test_pwm_str_cmp);
+  tcase_add_test(tc, test_pwm_str_read_all);
+  tcase_add_test(tc, test_pwm_str_read_line);
+  tcase_add_test(tc, test_pwm_str_hex_encode);
+  tcase_add_test(tc, test_pwm_str_hex_decode);
+  return tc;
 }

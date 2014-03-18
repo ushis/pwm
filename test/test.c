@@ -1,23 +1,27 @@
 #include <check.h>
 #include <stdlib.h>
 
-Suite *pwm_gen_suite();
-Suite *pwm_git_suite();
-Suite *pwm_gpg_suite();
-Suite *pwm_hex_suite();
-Suite *pwm_str_suite();
+TCase *pwm_gen_tests();
+TCase *pwm_git_tests();
+TCase *pwm_gpg_tests();
+TCase *pwm_hex_tests();
+TCase *pwm_str_tests();
 
 int
 main() {
   int failed;
-  SRunner *sr = srunner_create(NULL);
-  srunner_add_suite(sr, pwm_gen_suite());
-  srunner_add_suite(sr, pwm_git_suite());
-  srunner_add_suite(sr, pwm_gpg_suite());
-  srunner_add_suite(sr, pwm_hex_suite());
-  srunner_add_suite(sr, pwm_str_suite());
+  Suite *s = suite_create("pwm");
+  SRunner *sr = srunner_create(s);
+
+  suite_add_tcase(s, pwm_gen_tests());
+  suite_add_tcase(s, pwm_git_tests());
+  suite_add_tcase(s, pwm_gpg_tests());
+  suite_add_tcase(s, pwm_hex_tests());
+  suite_add_tcase(s, pwm_str_tests());
+
   srunner_run_all(sr, CK_NORMAL);
   failed = srunner_ntests_failed(sr);
   srunner_free(sr);
+
   return (failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

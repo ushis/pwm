@@ -30,14 +30,12 @@ START_TEST(test_pwm_hex_decode) {
 }
 END_TEST
 
-Suite *
-pwm_hex_suite() {
-  Suite *s = suite_create("pwm_hex");
-  TCase *tc_core = tcase_create("core");
-  tcase_add_test(tc_core, test_pwm_hex_encode_len);
-  tcase_add_test(tc_core, test_pwm_hex_decode_len);
-  tcase_add_test(tc_core, test_pwm_hex_encode);
-  tcase_add_test(tc_core, test_pwm_hex_decode);
-  suite_add_tcase(s, tc_core);
-  return s;
+TCase *
+pwm_hex_tests() {
+  TCase *tc = tcase_create("hex");
+  tcase_add_test(tc, test_pwm_hex_encode_len);
+  tcase_add_test(tc, test_pwm_hex_decode_len);
+  tcase_add_test(tc, test_pwm_hex_encode);
+  tcase_add_test(tc, test_pwm_hex_decode);
+  return tc;
 }

@@ -121,22 +121,20 @@ START_TEST(test_pwm_git_commit) {
 }
 END_TEST
 
-Suite *
-pwm_git_suite() {
-  Suite *s = suite_create("pwm_git");
-  TCase *tc_core = tcase_create("core");
-  tcase_add_test(tc_core, test_pwm_git_get);
-  tcase_add_test(tc_core, test_pwm_git_has);
-  tcase_add_test(tc_core, test_pwm_git_add);
-  tcase_add_test(tc_core, test_pwm_git_rm);
-  tcase_add_test(tc_core, test_pwm_git_commit);
+TCase *
+pwm_git_tests() {
+  TCase *tc = tcase_create("git");
+  tcase_add_test(tc, test_pwm_git_get);
+  tcase_add_test(tc, test_pwm_git_has);
+  tcase_add_test(tc, test_pwm_git_add);
+  tcase_add_test(tc, test_pwm_git_rm);
+  tcase_add_test(tc, test_pwm_git_commit);
   /*
-  tcase_add_test(tc_core, test_pwm_git_note_get);
-  tcase_add_test(tc_core, test_pwm_git_note_set);
-  tcase_add_test(tc_core, test_pwm_git_note_rm);
-  tcase_add_test(tc_core, test_pwm_git_walk_entries);
-  tcase_add_test(tc_core, test_pwm_git_walk_log);
+  tcase_add_test(tc, test_pwm_git_note_get);
+  tcase_add_test(tc, test_pwm_git_note_set);
+  tcase_add_test(tc, test_pwm_git_note_rm);
+  tcase_add_test(tc, test_pwm_git_walk_entries);
+  tcase_add_test(tc, test_pwm_git_walk_log);
   */
-  suite_add_tcase(s, tc_core);
-  return s;
+  return tc;
 }

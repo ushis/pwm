@@ -79,16 +79,14 @@ START_TEST(test_pwm_gen_by_name) {
 }
 END_TEST
 
-Suite *
-pwm_gen_suite() {
-  Suite *s = suite_create("pwm_gen");
-  TCase *tc_core = tcase_create("core");
-  tcase_add_test(tc_core, test_pwm_gen_rand);
-  tcase_add_test(tc_core, test_pwm_gen_alnum);
-  tcase_add_test(tc_core, test_pwm_gen_ascii);
-  tcase_add_test(tc_core, test_pwm_gen_hex);
-  tcase_add_test(tc_core, test_pwm_gen_num);
-  tcase_add_test(tc_core, test_pwm_gen_by_name);
-  suite_add_tcase(s, tc_core);
-  return s;
+TCase *
+pwm_gen_tests() {
+  TCase *tc = tcase_create("gen");
+  tcase_add_test(tc, test_pwm_gen_rand);
+  tcase_add_test(tc, test_pwm_gen_alnum);
+  tcase_add_test(tc, test_pwm_gen_ascii);
+  tcase_add_test(tc, test_pwm_gen_hex);
+  tcase_add_test(tc, test_pwm_gen_num);
+  tcase_add_test(tc, test_pwm_gen_by_name);
+  return tc;
 }
