@@ -161,13 +161,21 @@ cleanup:
   return err;
 }
 
+static const git_tree_entry *
+pwm_git_entry(pwm_git_t *git, const char *path) {
+  if (git_repository_is_empty(git->repo)) {
+    return NULL;
+  }
+  return git_tree_entry_byname(git->tree, path);
+}
+
 int
 pwm_git_get(pwm_git_t *git, const char *path, pwm_str_t *s) {
   const git_tree_entry *entry;
   git_blob *blob = NULL;
   int err;
 
-  if ((entry = git_tree_entry_byname(git->tree, path)) == NULL) {
+  if ((entry = pwm_git_entry(git, path)) == NULL) {
     fprintf(stderr, "pwm_git_get: entry not found: %s\n", path);
     return -1;
   }
@@ -185,10 +193,7 @@ cleanup:
 
 int
 pwm_git_has(pwm_git_t *git, const char *path) {
-  if (git_repository_is_empty(git->repo)) {
-    return 0;
-  }
-  return git_tree_entry_byname(git->tree, path) != NULL;
+  return pwm_git_entry(git, path) != NULL;
 }
 
 int
@@ -289,7 +294,7 @@ static const git_oid *
 pwm_git_entry_id(pwm_git_t *git, const char *path) {
   const git_tree_entry *entry;
 
-  if ((entry = git_tree_entry_byname(git->tree, path)) == NULL) {
+  if ((entry = pwm_git_entry(git, path)) == NULL) {
     return NULL;
   }
   return git_tree_entry_id(entry);
@@ -303,7 +308,7 @@ pwm_git_note_get(pwm_git_t *git, const char *path, pwm_str_t *s) {
   git_note *note = NULL;
 
   if ((id = pwm_git_entry_id(git, path)) == NULL) {
-    fprintf(stderr, "pwm_git_note_get: %s\n", giterr_last()->message);
+    fprintf(stderr, "pwm_git_note_get: entry not found: %s\n", path);
     goto cleanup;
   }
 
@@ -324,7 +329,7 @@ pwm_git_note_set(pwm_git_t *git, const char *path, const pwm_str_t *s) {
   const git_oid *id;
 
   if ((id = pwm_git_entry_id(git, path)) == NULL) {
-    fprintf(stderr, "pwm_git_note_add: %s\n", giterr_last()->message);
+    fprintf(stderr, "pwm_git_note_add: entry not found: %s\n", path);
     return -1;
   }
 
@@ -340,7 +345,7 @@ pwm_git_note_rm(pwm_git_t *git, const char *path) {
   const git_oid *id;
 
   if ((id = pwm_git_entry_id(git, path)) == NULL) {
-    fprintf(stderr, "pwm_git_note_rm: %s\n", giterr_last()->message);
+    fprintf(stderr, "pwm_git_note_rm: entry not found: %s\n", path);
     return -1;
   }
 
