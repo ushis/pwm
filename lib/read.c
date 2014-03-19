@@ -3,6 +3,23 @@
 #include <stdlib.h>
 #include <string.h>
 #include <termios.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+int
+pwm_read_file(pwm_str_t *s, const char *path) {
+  int fd, err;
+
+  if ((fd = open(path, O_RDONLY)) < 0) {
+    perror("pwm_read_file: open");
+    return -1;
+  }
+  err = pwm_str_read_all(s, fd);
+  close(fd);
+  return err;
+}
 
 int
 pwm_read_line(pwm_str_t *s, const char *prompt) {

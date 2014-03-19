@@ -1,6 +1,7 @@
 #include <check.h>
 #include <stdlib.h>
 
+TCase *pwm_db_tests();
 TCase *pwm_gen_tests();
 TCase *pwm_git_tests();
 TCase *pwm_gpg_tests();
@@ -13,6 +14,7 @@ main() {
   Suite *s = suite_create("pwm");
   SRunner *sr = srunner_create(s);
 
+  suite_add_tcase(s, pwm_db_tests());
   suite_add_tcase(s, pwm_gen_tests());
   suite_add_tcase(s, pwm_git_tests());
   suite_add_tcase(s, pwm_gpg_tests());
