@@ -9,6 +9,7 @@ typedef struct {
   git_repository *repo;
   git_signature *sig;
   git_tree *tree;
+  int dirty;
 } pwm_git_t;
 
 /**

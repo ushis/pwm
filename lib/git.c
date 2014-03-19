@@ -85,6 +85,7 @@ cleanup:
 int
 pwm_git_new(pwm_git_t **out, const char *path) {
   pwm_git_t *git;
+  int empty;
 
   if ((git = (pwm_git_t *) calloc(1, sizeof(pwm_git_t))) == NULL) {
     perror("calloc");
@@ -100,7 +101,12 @@ pwm_git_new(pwm_git_t **out, const char *path) {
     goto fail;
   }
 
-  if (git_repository_is_empty(git->repo)) {
+  if ((empty = git_repository_is_empty(git->repo)) < 0) {
+    fprintf(stderr, "pwm_git_new: %s\n", giterr_last()->message);
+    goto fail;
+  }
+
+  if (empty) {
     *out = git;
     return 0;
   }
@@ -163,7 +169,7 @@ cleanup:
 
 static const git_tree_entry *
 pwm_git_entry(pwm_git_t *git, const char *path) {
-  if (git_repository_is_empty(git->repo)) {
+  if (git->tree == NULL) {
     return NULL;
   }
   return git_tree_entry_byname(git->tree, path);
@@ -224,7 +230,9 @@ pwm_git_add(pwm_git_t *git, const char *path, const pwm_str_t *s) {
 
   if ((err = git_tree_lookup(&git->tree, git->repo, &id)) < 0) {
     fprintf(stderr, "pwm_git_add: %s\n", giterr_last()->message);
+    goto cleanup;
   }
+  git->dirty = 1;
 
 cleanup:
   git_treebuilder_free(bld);
@@ -254,7 +262,9 @@ pwm_git_rm(pwm_git_t *git, const char *path) {
 
   if ((err = git_tree_lookup(&git->tree, git->repo, &id)) < 0) {
     fprintf(stderr, "pwm_git_rm: %s\n", giterr_last()->message);
+    goto cleanup;
   }
+  git->dirty = 1;
 
 cleanup:
   git_treebuilder_free(bld);
@@ -266,26 +276,43 @@ pwm_git_head(pwm_git_t *git, git_commit **commit) {
   return git_revparse_single((git_object **) commit, git->repo, "HEAD");
 }
 
+static int
+pwm_git_commit_head(pwm_git_t *git, git_commit *head, const char *msg) {
+  git_oid id;
+  size_t n = 1;
+  git_commit *parents[] = {head};
+
+  if (head == NULL) {
+    n = 0;
+  }
+  return git_commit_create(&id, git->repo, "HEAD", git->sig, git->sig,
+                           NULL, msg, git->tree, n, parents);
+}
+
 int
 pwm_git_commit(pwm_git_t *git, const char *msg) {
   git_commit *head = NULL;
   git_oid id;
-  size_t n = 0;
+  size_t n = 1;
   int err;
 
-  if (!git_repository_is_empty(git->repo)) {
-    if (pwm_git_head(git, &head) < 0) {
-      fprintf(stderr, "pwm_git_commit: %s\n", giterr_last()->message);
-      return -1;
-    }
-    n = 1;
+  if (!git->dirty) {
+    fprintf(stderr, "pwm_git_commit: nothing to commit\n");
+    return -1;
   }
-  err = git_commit_create_v(&id, git->repo, "HEAD", git->sig, git->sig,
-                            NULL, msg, git->tree, n, head);
 
-  if (err < 0) {
+  if ((err = pwm_git_head(git, &head)) < 0 && err != GIT_ENOTFOUND) {
     fprintf(stderr, "pwm_git_commit: %s\n", giterr_last()->message);
+    goto cleanup;
   }
+
+  if ((err = pwm_git_commit_head(git, head, msg)) < 0) {
+    fprintf(stderr, "pwm_git_commit: %s\n", giterr_last()->message);
+    goto cleanup;
+  }
+  git->dirty = 0;
+
+cleanup:
   git_commit_free(head);
   return err;
 }
@@ -363,7 +390,7 @@ pwm_git_walk_cb(const char *root, const git_tree_entry *entry, void *cb) {
 
 int
 pwm_git_walk_entries(pwm_git_t *git, pwm_git_walk_entries_cb cb) {
-  if (git_repository_is_empty(git->repo)) {
+  if (git->tree == NULL) {
     return 0;
   }
   return git_tree_walk(git->tree, GIT_TREEWALK_PRE, pwm_git_walk_cb, cb);
@@ -376,11 +403,10 @@ pwm_git_walk_log(pwm_git_t *git, pwm_git_walk_log_cb cb) {
   int64_t time;
   int err;
 
-  if (git_repository_is_empty(git->repo)) {
-    return 0;
-  }
-
-  if (pwm_git_head(git, &commit) < 0) {
+  if ((err = pwm_git_head(git, &commit)) < 0) {
+    if (err == GIT_ENOTFOUND) {
+      return 0;
+    }
     fprintf(stderr, "pwm_git_walk_log: %s\n", giterr_last()->message);
     return -1;
   }

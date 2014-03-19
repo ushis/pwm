@@ -57,10 +57,10 @@ START_TEST(test_pwm_git_has) {
 
   /* uncommited entry */
   ck_assert_int_eq(pwm_git_add(git, "slipsum", &a), 0);
-  ck_assert_int_eq(pwm_git_has(git, "slipsum"), 0);
-  ck_assert_int_eq(pwm_git_commit(git, "+ slipsum"), 0);
+  ck_assert_int_eq(pwm_git_has(git, "slipsum"), 1);
 
   /* commited entry */
+  ck_assert_int_eq(pwm_git_commit(git, "+ slipsum"), 0);
   ck_assert_int_eq(pwm_git_has(git, "slipsum"), 1);
 
   /* nonexistent entry */
@@ -140,6 +140,9 @@ START_TEST(test_pwm_git_commit) {
   setup(&git);
   read_file(&a, "test/data/slipsum.txt");
   read_file(&b, "test/data/slipsum.txt.gpg");
+
+  /* commit without any changes */
+  ck_assert_int_lt(pwm_git_commit(git, "nothing"), 0);
 
   /* commit added entry */
   ck_assert_int_eq(pwm_git_add(git, "slipsum", &a), 0);
@@ -249,6 +252,73 @@ START_TEST(test_pwm_git_note_rm) {
 }
 END_TEST
 
+static int entry_count = 0;
+
+static int
+entry_count_incr(const char *path) {
+  return entry_count++;
+}
+
+START_TEST(test_pwm_git_walk_entries) {
+  pwm_git_t *git;
+  PWM_STR_INIT(a);
+  setup(&git);
+  read_file(&a, "test/data/slipsum.txt");
+
+  /* empty tree */
+  ck_assert_int_eq(pwm_git_walk_entries(git, entry_count_incr), 0);
+  ck_assert_int_eq(entry_count, 0);
+
+  /* tree with uncommited entries */
+  ck_assert_int_eq(pwm_git_add(git, "sample1", &a), 0);
+  ck_assert_int_eq(pwm_git_add(git, "sample2", &a), 0);
+  ck_assert_int_eq(pwm_git_add(git, "sample3", &a), 0);
+  ck_assert_int_eq(pwm_git_walk_entries(git, entry_count_incr), 0);
+  ck_assert_int_eq(entry_count, 3);
+
+  /* tree with commited entries */
+  entry_count = 0;
+  ck_assert_int_eq(pwm_git_commit(git, "+ sample1 sample2 sample3"), 0);
+  ck_assert_int_eq(pwm_git_walk_entries(git, entry_count_incr), 0);
+  ck_assert_int_eq(entry_count, 3);
+
+  pwm_str_free(&a);
+  pwm_git_free(git);
+}
+END_TEST
+
+static int log_count = 0;
+
+static int
+log_count_incr(int64_t time, const char *name, const char *msg) {
+  return log_count++;
+}
+
+START_TEST(test_pwm_git_walk_log) {
+  pwm_git_t *git;
+  PWM_STR_INIT(a);
+  setup(&git);
+  read_file(&a, "test/data/slipsum.txt");
+
+  /* empty repo */
+  ck_assert_int_ge(pwm_git_walk_log(git, log_count_incr), 0);
+  ck_assert_int_eq(log_count, 0);
+
+  /* repo with commits */
+  ck_assert_int_eq(pwm_git_add(git, "slipsum", &a), 0);
+  ck_assert_int_eq(pwm_git_commit(git, "+ slipsum"), 0);
+  ck_assert_int_eq(pwm_git_rm(git, "slipsum"), 0);
+  ck_assert_int_eq(pwm_git_commit(git, "- slipsum"), 0);
+  ck_assert_int_eq(pwm_git_add(git, "slipsum", &a), 0);
+  ck_assert_int_eq(pwm_git_commit(git, "+ slipsum"), 0);
+  ck_assert_int_ge(pwm_git_walk_log(git, log_count_incr), 0);
+  ck_assert_int_eq(log_count, 3);
+
+  pwm_str_free(&a);
+  pwm_git_free(git);
+}
+END_TEST
+
 TCase *
 pwm_git_tests() {
   TCase *tc = tcase_create("git");
@@ -260,9 +330,7 @@ pwm_git_tests() {
   tcase_add_test(tc, test_pwm_git_note_get);
   tcase_add_test(tc, test_pwm_git_note_set);
   tcase_add_test(tc, test_pwm_git_note_rm);
-  /*
   tcase_add_test(tc, test_pwm_git_walk_entries);
   tcase_add_test(tc, test_pwm_git_walk_log);
-  */
   return tc;
 }
