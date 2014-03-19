@@ -280,7 +280,7 @@ static int
 pwm_git_commit_head(pwm_git_t *git, git_commit *head, const char *msg) {
   git_oid id;
   size_t n = 1;
-  git_commit *parents[] = {head};
+  const git_commit *parents[] = {head};
 
   if (head == NULL) {
     n = 0;
@@ -292,8 +292,6 @@ pwm_git_commit_head(pwm_git_t *git, git_commit *head, const char *msg) {
 int
 pwm_git_commit(pwm_git_t *git, const char *msg) {
   git_commit *head = NULL;
-  git_oid id;
-  size_t n = 1;
   int err;
 
   if (!git->dirty) {
