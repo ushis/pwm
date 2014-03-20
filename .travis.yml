@@ -1,0 +1,13 @@
+language: c
+
+compiler:
+  - clang
+  - gcc
+
+install:
+  - sudo apt-get -qq update
+  - sudo apt-get -qq install libgit2 libgpgme11 check
+
+script:
+  - make
+  - make test
