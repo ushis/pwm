@@ -5,16 +5,16 @@
 #include <unistd.h>
 #include <getopt.h>
 
-const char *usage_str = "pwm note <cmd> [<args>]";
+static const char *usage_str = "pwm note <cmd> [<args>]";
 
-const char *usage_cmd_str =
+static const char *usage_cmd_str =
   "[<opts>] <key>\n\n"
   "options:\n"
   "  -h              show this help";
 
-int del(pwm_db_t *db, const char *key);
-int get(pwm_db_t *db, const char *key);
-int set(pwm_db_t *db, const char *key);
+static int del(pwm_db_t *db, const char *key);
+static int get(pwm_db_t *db, const char *key);
+static int set(pwm_db_t *db, const char *key);
 
 typedef struct {
   const char *cmd;
@@ -22,13 +22,13 @@ typedef struct {
   const char *help;
 } cmd_t;
 
-const cmd_t cmds[] = {
+static const cmd_t cmds[] = {
   {"del", del, "delete a note"},
   {"get", get, "retrieve a note"},
   {"set", set, "set a note"}
 };
 
-void
+static void
 usage() {
   size_t i;
 
@@ -40,13 +40,13 @@ usage() {
   exit(EXIT_FAILURE);
 }
 
-void
+static void
 usage_cmd(const char *cmd) {
   fprintf(stderr, "usage: pwm note %s %s\n", cmd, usage_cmd_str);
   exit(EXIT_FAILURE);
 }
 
-int
+static int
 del(pwm_db_t *db, const char *key) {
   int err;
 
@@ -56,7 +56,7 @@ del(pwm_db_t *db, const char *key) {
   return err;
 }
 
-int
+static int
 get(pwm_db_t *db, const char *key) {
   int err;
   PWM_STR_INIT(buf);
@@ -68,7 +68,7 @@ get(pwm_db_t *db, const char *key) {
   return err;
 }
 
-int
+static int
 set(pwm_db_t *db, const char *key) {
   int err;
   PWM_STR_INIT(buf);
@@ -83,7 +83,7 @@ cleanup:
   return err;
 }
 
-int
+static int
 cmd_exec(const cmd_t *cmd, const char *key) {
   int err;
   pwm_db_t *db;
@@ -102,7 +102,7 @@ cmd_exec(const cmd_t *cmd, const char *key) {
   return err;
 }
 
-const cmd_t *
+static const cmd_t *
 cmd_find(const char *cmd) {
   size_t i;
 

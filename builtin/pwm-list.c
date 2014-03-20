@@ -2,23 +2,23 @@
 #include <stdio.h>
 #include <getopt.h>
 
-const char *usage_str =
+static const char *usage_str =
   "pwm list [<opts>]\n\n"
   "options:\n"
   "  -h              show this help";
 
-void
+static void
 usage() {
   fprintf(stderr, "usage: %s\n", usage_str);
   exit(EXIT_FAILURE);
 }
 
-int
+static int
 print_ln(const char *line) {
   return printf("%s\n", line);
 }
 
-int
+static int
 run() {
   int err;
   pwm_db_t *db;

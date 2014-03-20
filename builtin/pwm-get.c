@@ -2,13 +2,13 @@
 #include <stdio.h>
 #include <getopt.h>
 
-const char *usage_str =
+static const char *usage_str =
   "pwm get [<opts>] <key>\n\n"
   "options:\n"
   "  -c              store the password in the clipboard\n"
   "  -h              show this help";
 
-void
+static void
 usage() {
   fprintf(stderr, "usage: %s\n", usage_str);
   exit(EXIT_FAILURE);
@@ -20,7 +20,7 @@ typedef struct {
 
 #define OPTS_DEFAULT {0}
 
-int
+static int
 run(opts_t *opts, const char *key) {
   int err;
   pwm_db_t *db = NULL;

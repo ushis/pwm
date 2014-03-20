@@ -3,18 +3,18 @@
 #include <time.h>
 #include <getopt.h>
 
-const char *usage_str =
+static const char *usage_str =
   "pwm log [<opts>]\n\n"
   "options:\n"
   "  -h              show this help";
 
-void
+static void
 usage() {
   fprintf(stderr, "usage: %s\n", usage_str);
   exit(EXIT_FAILURE);
 }
 
-int
+static int
 print_log(int64_t time, const char *name, const char *msg) {
   struct tm *t;
   char buf[40];
@@ -31,7 +31,7 @@ print_log(int64_t time, const char *name, const char *msg) {
   return printf("[%s] (%s) %s\n", buf, name, msg);
 }
 
-int
+static int
 run() {
   int err;
   pwm_db_t *db;

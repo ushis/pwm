@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <getopt.h>
 
-const char *usage_str =
+static const char *usage_str =
   "pwm set [<opts>] <key>\n\n"
   "options:\n"
   "  -c              store password in the clipboard\n"
@@ -13,7 +13,7 @@ const char *usage_str =
   "  -m <msg>        use a custom log message\n"
   "  -p              print password";
 
-void
+static void
 usage() {
   fprintf(stderr, "usage: %s\n", usage_str);
   exit(EXIT_FAILURE);
@@ -28,7 +28,7 @@ typedef struct {
 
 #define OPTS_DEFAULT {NULL,0,0,0}
 
-int
+static int
 run(opts_t *opts, const char *key) {
   int err;
   pwm_db_t *db = NULL;

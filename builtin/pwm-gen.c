@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <getopt.h>
 
-const char *usage_str =
+static const char *usage_str =
   "pwm gen [<opts>] <key>\n\n"
   "options:\n"
   "  -c              store password in the clipboard\n"
@@ -16,7 +16,7 @@ const char *usage_str =
   "  -m <msg>        use a custom log message\n"
   "  -p              print generated password";
 
-void
+static void
 usage() {
   size_t i = 0;
   const pwm_gen_t *gen;
@@ -40,7 +40,7 @@ typedef struct {
 
 #define OPTS_DEFAULT {"alnum",NULL,32,0,0,0}
 
-int
+static int
 run(opts_t *opts, const char *key) {
   int err;
   pwm_db_t *db = NULL;

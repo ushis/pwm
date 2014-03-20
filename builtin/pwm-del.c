@@ -2,14 +2,14 @@
 #include <stdio.h>
 #include <getopt.h>
 
-const char *usage_str =
+static const char *usage_str =
   "pwm del [<opts>] <key>\n\n"
   "options:\n"
   "  -f              ignore nonexistent passwords\n"
   "  -h              show this help\n"
   "  -m <msg>        use a custom log message";
 
-void
+static void
 usage() {
   fprintf(stderr, "usage: %s\n", usage_str);
   exit(EXIT_FAILURE);
@@ -22,7 +22,7 @@ typedef struct {
 
 #define OPTS_DEFAULT {NULL,0}
 
-int
+static int
 run (opt_t *opts, const char *key) {
   int err;
   pwm_db_t *db = NULL;

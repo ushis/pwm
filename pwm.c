@@ -10,7 +10,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-const char *usage_str =
+static const char *usage_str =
   "pwm [<opts>] <cmd> [<args>]\n\n"
   "options:\n"
   "  -d <path>       database directory\n"
@@ -24,7 +24,7 @@ typedef struct {
   char *help;
 } cmd_t;
 
-const cmd_t cmds[] = {
+static const cmd_t cmds[] = {
   {"del",  PACKAGE_EXEC_DIR"/pwm-del",  "delete a password"},
   {"gen",  PACKAGE_EXEC_DIR"/pwm-gen",  "generate a password"},
   {"get",  PACKAGE_EXEC_DIR"/pwm-get",  "retrieve a password"},
@@ -41,7 +41,7 @@ typedef struct {
 
 #define OPTS_DEFAULT {NULL,NULL}
 
-void
+static void
 usage() {
   size_t i;
 
@@ -53,13 +53,13 @@ usage() {
   exit(EXIT_FAILURE);
 }
 
-void
+static void
 version() {
   fprintf(stderr, "pwm %s\n", PACKAGE_VERSION);
   exit(EXIT_SUCCESS);
 }
 
-const cmd_t *
+static const cmd_t *
 cmd_find(const char *cmd) {
   size_t i;
 
@@ -71,7 +71,7 @@ cmd_find(const char *cmd) {
   return NULL;
 }
 
-int
+static int
 cmd_exec(const cmd_t *cmd, char **argv) {
   pid_t pid;
   int rc;
