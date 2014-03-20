@@ -9,15 +9,18 @@ int
 pwm_str_resize(pwm_str_t *s, size_t cap) {
   char *buf;
 
-  if ((buf = (char *) realloc(s->buf, (cap+1)*sizeof(char))) == NULL) {
+  /* round (cap + 1) up to a multiple of 16 */
+  cap = (cap + 16) & ~15;
+
+  if ((buf = (char *) realloc(s->buf, cap * sizeof(char))) == NULL) {
     perror("pwm_str_resize: realloc");
     return -1;
   }
   s->buf = buf;
-  s->cap = cap;
-  pwm_str_shrink(s, cap);
+  s->cap = cap - 1;
+  pwm_str_shrink(s, s->cap);
 
-  if (mlock(s->buf, (cap+1)*sizeof(char)) < 0) {
+  if (mlock(s->buf, cap * sizeof(char)) < 0) {
     perror("pwm_str_resize: mlock");
     return -1;
   }
@@ -79,8 +82,8 @@ pwm_str_append_path_component(pwm_str_t *s, const char *buf, size_t n) {
 void
 pwm_str_shrink(pwm_str_t *s, size_t n) {
   if (s->len > n) {
+    s->buf[n] = '\0';
     s->len = n;
-    s->buf[s->len] = '\0';
   }
 }
 

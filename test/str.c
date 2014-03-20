@@ -21,12 +21,12 @@ END_TEST
 START_TEST(test_pwm_str_resize) {
   PWM_STR_INIT(buf);
   ck_assert_int_eq(pwm_str_resize(&buf, 4<<10), 0);
-  ck_assert_int_eq(buf.cap, 4<<10);
+  ck_assert_int_ge(buf.cap, 4<<10);
   ck_assert_int_eq(buf.len, 0);
   buf.len = 2<<10;
   ck_assert_int_eq(pwm_str_resize(&buf, 1<<10), 0);
-  ck_assert_int_eq(buf.cap, 1<<10);
-  ck_assert_int_eq(buf.len, 1<<10);
+  ck_assert_int_ge(buf.cap, 1<<10);
+  ck_assert_int_eq(buf.len, buf.cap);
   pwm_str_free(&buf);
 }
 END_TEST
