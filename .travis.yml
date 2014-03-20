@@ -7,8 +7,7 @@ compiler:
 install:
   - sudo apt-get -qq update
   - sudo apt-get -qq install cmake libgpgme11 check
-  - ./.travis.sh
+  - ./.travis.sh libgit2
 
 script:
-  - make
-  - make test
+  - ./.travis.sh pwm
