@@ -381,17 +381,21 @@ pwm_git_note_rm(pwm_git_t *git, const char *path) {
   return 0;
 }
 
-static int
-pwm_git_walk_cb(const char *root, const git_tree_entry *entry, void *cb) {
-  return ((pwm_git_walk_entries_cb) cb)(git_tree_entry_name(entry));
-}
-
 int
 pwm_git_walk_entries(pwm_git_t *git, pwm_git_walk_entries_cb cb) {
+  const git_tree_entry *entry;
+  size_t i;
+
   if (git->tree == NULL) {
     return 0;
   }
-  return git_tree_walk(git->tree, GIT_TREEWALK_PRE, pwm_git_walk_cb, cb);
+
+  for (i = 0; (entry = git_tree_entry_byindex(git->tree, i)) != NULL; i++) {
+    if (cb(git_tree_entry_name(entry)) < 0) {
+      return -1;
+    }
+  }
+  return 0;
 }
 
 int
