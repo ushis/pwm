@@ -254,11 +254,7 @@ pwm_git_has(pwm_git_t *git, const char *dir, const char *key) {
     fprintf(stderr, "pwm_git_has: %s\n", giterr_last()->message);
     goto cleanup;
   }
-
-  if (tree == NULL) {
-    return 0;
-  }
-  rc = git_tree_entry_byname(tree, key) != NULL;
+  rc = (tree == NULL) ? 0 : (git_tree_entry_byname(tree, key) != NULL);
 
 cleanup:
   git_tree_free(tree);
