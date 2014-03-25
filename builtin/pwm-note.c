@@ -5,7 +5,7 @@
 #include <string.h>
 #include <libgen.h>
 #include <unistd.h>
-#include <wait.h>
+#include <sys/wait.h>
 
 static const char *usage_str = "pwm note <cmd> [<args>]";
 
