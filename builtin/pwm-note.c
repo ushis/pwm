@@ -1,31 +1,25 @@
+#include "../config.h"
 #include "pwm.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libgen.h>
 #include <unistd.h>
-#include <getopt.h>
+#include <wait.h>
 
 static const char *usage_str = "pwm note <cmd> [<args>]";
 
-static const char *usage_cmd_str =
-  "[<opts>] <key>\n\n"
-  "options:\n"
-  "  -h              show this help";
-
-static int del(pwm_db_t *db, const char *key);
-static int get(pwm_db_t *db, const char *key);
-static int set(pwm_db_t *db, const char *key);
-
 typedef struct {
-  const char *cmd;
-  int (*func)(pwm_db_t *db, const char *key);
-  const char *help;
+  char *cmd;
+  char *bin;
+  char *help;
 } cmd_t;
 
 static const cmd_t cmds[] = {
-  {"del", del, "delete a note"},
-  {"get", get, "retrieve a note"},
-  {"set", set, "set a note"}
+  {"del",  PACKAGE_EXEC_DIR"/pwm-note-del",  "delete a note"},
+  {"get",  PACKAGE_EXEC_DIR"/pwm-note-get",  "retrieve a note"},
+  {"list", PACKAGE_EXEC_DIR"/pwm-note-list", "list all notes"},
+  {"set",  PACKAGE_EXEC_DIR"/pwm-note-set",  "set a note"}
 };
 
 static void
@@ -40,68 +34,6 @@ usage() {
   exit(EXIT_FAILURE);
 }
 
-static void
-usage_cmd(const char *cmd) {
-  fprintf(stderr, "usage: pwm note %s %s\n", cmd, usage_cmd_str);
-  exit(EXIT_FAILURE);
-}
-
-static int
-del(pwm_db_t *db, const char *key) {
-  int err;
-
-  if ((err = pwm_db_note_del(db, key)) >= 0) {
-    fprintf(stderr, "deleted your %s note\n", key);
-  }
-  return err;
-}
-
-static int
-get(pwm_db_t *db, const char *key) {
-  int err;
-  PWM_STR_INIT(buf);
-
-  if ((err = pwm_db_note_get(db, key, &buf)) >= 0) {
-    fputs(buf.buf, stdout);
-  }
-  pwm_str_free(&buf);
-  return err;
-}
-
-static int
-set(pwm_db_t *db, const char *key) {
-  int err;
-  PWM_STR_INIT(buf);
-
-  if ((err = pwm_str_read_all(&buf, STDIN_FILENO)) < 0) {
-    goto cleanup;
-  }
-  err = pwm_db_note_set(db, key, &buf);
-
-cleanup:
-  pwm_str_free(&buf);
-  return err;
-}
-
-static int
-cmd_exec(const cmd_t *cmd, const char *key) {
-  int err;
-  pwm_db_t *db;
-
-  if ((err = pwm_db_new(&db, NULL, NULL)) < 0) {
-    return err;
-  }
-
-  if (pwm_db_has(db, key)) {
-    err = cmd->func(db, key);
-  } else {
-    fprintf(stderr, "couldn't find your %s password\n", key);
-    err = -1;
-  }
-  pwm_db_free(db);
-  return err;
-}
-
 static const cmd_t *
 cmd_find(const char *cmd) {
   size_t i;
@@ -114,9 +46,32 @@ cmd_find(const char *cmd) {
   return NULL;
 }
 
+static int
+cmd_exec(const cmd_t *cmd, char **argv) {
+  pid_t pid;
+  int rc;
+
+  if ((pid = fork()) < 0) {
+    perror("fork");
+    return 1;
+  }
+
+  if (pid == 0) {
+    argv[0] = basename(cmd->bin);
+    execv(cmd->bin, argv);
+    perror("execv");
+    exit(EXIT_FAILURE);
+  }
+
+  if (waitpid(pid, &rc, 0) < 0) {
+    perror("waitpid");
+    return 1;
+  }
+  return WIFEXITED(rc) ? WEXITSTATUS(rc) : 1;
+}
+
 int
 main(int argc, char **argv) {
-  int err;
   const cmd_t *cmd;
 
   if (argc < 2) {
@@ -126,17 +81,5 @@ main(int argc, char **argv) {
   if ((cmd = cmd_find(argv[1])) == NULL) {
     usage();
   }
-
-  while (getopt(argc-1, &argv[1], "h") >= 0) {
-    usage_cmd(cmd->cmd); /* -h is the only valid option */
-  }
-  optind++;
-
-  if (optind >= argc) {
-    usage_cmd(cmd->cmd);
-  }
-  pwm_init();
-  err = cmd_exec(cmd, argv[optind]);
-  pwm_shutdown();
-  exit(err < 0);
+  exit(cmd_exec(cmd, &argv[1]));
 }

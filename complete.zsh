@@ -36,6 +36,10 @@ __pwm_keys() {
   compadd $(type pwm &>/dev/null && pwm list 2>/dev/null)
 }
 
+__pwm_note_keys() {
+  compadd $(type pwm &>/dev/null && pwm note list 2>/dev/null)
+}
+
 __pwm_commands() {
   _values 'pwm command' \
     'del[delete a password]' \
@@ -96,25 +100,6 @@ __pwm_get() {
     '-h[show help]'
 }
 
-__pwm_note_commands() {
-  _values 'pwm note command' \
-    'del[delete a note]' \
-    'get[retrieve a note]' \
-    'set[set a note]'
-}
-
-__pwm_note_arguments() {
-  _arguments \
-    '*:key:__pwm_keys' \
-    '-h[show help]'
-}
-
-__pwm_note() {
-  _arguments \
-    '1: :__pwm_note_commands' \
-    '*:: :__pwm_note_arguments'
-}
-
 __pwm_set() {
   local keys=''
 
@@ -126,5 +111,55 @@ __pwm_set() {
     '-h[show help]' \
     '-m+[custom log message]:msg' \
     '-p[print password]' \
+    $keys
+}
+
+__pwm_note() {
+  _arguments \
+    '1: :__pwm_note_commands' \
+    '*:: :__pwm_note_arguments'
+}
+
+__pwm_note_commands() {
+  _values 'pwm note command' \
+    'del[delete a note]' \
+    'get[retrieve a note]' \
+    'list[list all notes]' \
+    'set[set a note]'
+}
+
+__pwm_note_arguments() {
+  case "${words[1]}" in
+    del|get|set)
+      __pwm_note_${words[1]} && return 0
+      ;;
+    *)
+      return 1
+  esac
+}
+
+__pwm_note_del() {
+  _arguments \
+    '*:key:__pwm_note_keys' \
+    '-f[ignore nonexistent notes]' \
+    '-h[show help]' \
+    '-m+[custom log message]:msg'
+}
+
+__pwm_note_get() {
+  _arguments \
+    '*:key:__pwm_note_keys' \
+    '-h[show help]'
+}
+
+__pwm_note_set() {
+  local keys=''
+
+  __pwm_force && keys='*:key:__pwm_note_keys'
+
+  _arguments \
+    '-f[override existing note]' \
+    '-h[show help]' \
+    '-m+[custom log message]:msg' \
     $keys
 }

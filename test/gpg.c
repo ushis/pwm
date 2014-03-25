@@ -54,32 +54,10 @@ START_TEST(test_pwm_gpg_encrypt) {
 }
 END_TEST
 
-START_TEST(test_pwm_gpg_encrypt_armor) {
-  int fd;
-  pwm_gpg_t *gpg;
-  PWM_STR_INIT(a);
-  PWM_STR_INIT(b);
-  PWM_STR_INIT(c);
-  setup(&gpg);
-  ck_assert_int_ge((fd = open("test/data/slipsum.txt", O_RDONLY)), 0);
-  ck_assert_int_eq(pwm_str_read_all(&a, fd), 0);
-  ck_assert_int_eq(close(fd), 0);
-  ck_assert_int_eq(pwm_gpg_encrypt_armor(gpg, &b, &a), 0);
-  ck_assert_int_eq(pwm_gpg_decrypt(gpg, &c, &b), 0);
-  ck_assert_int_eq(pwm_str_cmp(&a, &c), 0);
-  ck_assert_int_eq(memcmp(b.buf, "-----BEGIN PGP MESSAGE-----\n", 28), 0);
-  pwm_str_free(&c);
-  pwm_str_free(&b);
-  pwm_str_free(&a);
-  pwm_gpg_free(gpg);
-}
-END_TEST
-
 TCase *
 pwm_gpg_tests() {
   TCase *tc = tcase_create("gpg");
   tcase_add_test(tc, test_pwm_gpg_decrypt);
   tcase_add_test(tc, test_pwm_gpg_encrypt);
-  tcase_add_test(tc, test_pwm_gpg_encrypt_armor);
   return tc;
 }

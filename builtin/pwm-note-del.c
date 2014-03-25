@@ -3,9 +3,9 @@
 #include <getopt.h>
 
 static const char *usage_str =
-  "pwm del [<opts>] <key>\n\n"
+  "pwm note del [<opts>] <key>\n\n"
   "options:\n"
-  "  -f              ignore nonexistent passwords\n"
+  "  -f              ignore nonexistent notes\n"
   "  -h              show this help\n"
   "  -m <msg>        use a custom log message";
 
@@ -31,22 +31,13 @@ run (opt_t *opts, const char *key) {
     goto cleanup;
   }
 
-  if (!pwm_db_has(db, "passwd", key)) {
+  if (!pwm_db_has(db, "notes", key)) {
     if (opts->force) {
-      fprintf(stderr, "deleted your %s password\n", key);
+      fprintf(stderr, "deleted your %s note\n", key);
     } else {
-      fprintf(stderr, "couldn't find your %s password\n", key);
+      fprintf(stderr, "couldn't find your %s note\n", key);
       err = -1;
     }
-    goto cleanup;
-  }
-
-  if ((err = pwm_db_del(db, "passwd", key, opts->msg)) < 0) {
-    goto cleanup;
-  }
-  fprintf(stderr, "deleted your %s password\n", key);
-
-  if (!pwm_db_has(db, "notes", key)) {
     goto cleanup;
   }
 
@@ -63,9 +54,9 @@ cleanup:
 
 int
 main(int argc, char **argv) {
-  char c;
-  int err;
   opt_t opts = OPTS_DEFAULT;
+  int err;
+  char c;
 
   while ((c = getopt(argc, argv, "fhm:")) > -1) {
     switch (c) {

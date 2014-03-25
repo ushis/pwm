@@ -53,14 +53,4 @@ int pwm_gpg_decrypt(pwm_gpg_t *gpg, pwm_str_t *dst, const pwm_str_t *src);
  */
 int pwm_gpg_encrypt(pwm_gpg_t *gpg, pwm_str_t *dst, const pwm_str_t *src);
 
-/**
- * Encrypts a string ASCII armored.
- *
- * @param  gpg  The GPG handler
- * @param  dst  The string pointer to store the result in
- * @param  src  The string to encrypt
- * @return 0 on success or an error code
- */
-int pwm_gpg_encrypt_armor(pwm_gpg_t *gpg, pwm_str_t *dst, const pwm_str_t *src);
-
 #endif /* GPG_H */

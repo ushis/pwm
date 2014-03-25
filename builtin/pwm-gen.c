@@ -51,7 +51,7 @@ run(opts_t *opts, const char *key) {
     goto cleanup;
   }
 
-  if (!opts->force && pwm_db_has(db, key)) {
+  if (!opts->force && pwm_db_has(db, "passwd", key)) {
     fprintf(stderr, "password for %s already exists\n", key);
     err = -1;
     goto cleanup;
@@ -66,7 +66,7 @@ run(opts_t *opts, const char *key) {
   if ((err = gen->func(&buf, opts->len)) < 0) {
     goto cleanup;
   }
-  err = pwm_db_set(db, key, opts->msg, &buf);
+  err = pwm_db_set(db, "passwd", key, opts->msg, &buf);
   pwm_db_clean(db);
 
   if (err < 0) {

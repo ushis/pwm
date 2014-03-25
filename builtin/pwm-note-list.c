@@ -3,7 +3,7 @@
 #include <getopt.h>
 
 static const char *usage_str =
-  "pwm list [<opts>]\n\n"
+  "pwm note list [<opts>]\n\n"
   "options:\n"
   "  -h              show this help";
 
@@ -26,7 +26,7 @@ run() {
   if ((err = pwm_db_new(&db, NULL, NULL)) < 0) {
     return err;
   }
-  err = pwm_db_list(db, "passwd", print_ln);
+  err = pwm_db_list(db, "notes", print_ln);
   pwm_db_free(db);
   return err;
 }

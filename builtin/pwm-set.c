@@ -38,7 +38,7 @@ run(opts_t *opts, const char *key) {
     goto cleanup;
   }
 
-  if (!opts->force && pwm_db_has(db, key)) {
+  if (!opts->force && pwm_db_has(db, "passwd", key)) {
     fprintf(stderr, "password for %s already exists\n", key);
     err = -1;
     goto cleanup;
@@ -56,16 +56,18 @@ run(opts_t *opts, const char *key) {
     goto cleanup;
   }
 
-  if ((err = pwm_db_set(db, key, opts->msg, &buf)) >= 0) {
-    fprintf(stderr, "\rsaved your %s password\n", key);
+  if ((err = pwm_db_set(db, "passwd", key, opts->msg, &buf)) < 0) {
+    goto cleanup;
   }
-  pwm_db_clean(db);
 
   if (opts->clip && (err = pwm_clip_set(&buf)) >= 0) {
-    fprintf(stderr, "stored your %s password in the clipboard\n", key);
+    fprintf(stderr, "\rstored your %s password in the clipboard\n", key);
+  } else {
+    fprintf(stderr, "\rsaved your %s password\n", key);
   }
 
 cleanup:
+  pwm_db_clean(db);
   pwm_db_free(db);
   pwm_str_free(&buf);
   return err;

@@ -1,12 +1,15 @@
 #include "pwm.h"
 #include <stdio.h>
+#include <string.h>
+#include <unistd.h>
 #include <getopt.h>
 
 static const char *usage_str =
-  "pwm get [<opts>] <key>\n\n"
+  "pwm note set [<opts>] <key>\n\n"
   "options:\n"
-  "  -c              store the password in the clipboard\n"
-  "  -h              show this help";
+  "  -f              override existing note\n"
+  "  -h              show this help\n"
+  "  -m <msg>        use a custom log message";
 
 static void
 usage() {
@@ -15,16 +18,17 @@ usage() {
 }
 
 typedef struct {
-  int clip;
+  char *msg;
+  int force;
 } opts_t;
 
-#define OPTS_DEFAULT {0}
+#define OPTS_DEFAULT {NULL,0}
 
 static int
 run(opts_t *opts, const char *key) {
-  int err;
   pwm_db_t *db = NULL;
   PWM_STR_INIT(buf);
+  int err;
 
   if ((err = pwm_db_new(&db, NULL, NULL)) < 0) {
     goto cleanup;
@@ -36,20 +40,19 @@ run(opts_t *opts, const char *key) {
     goto cleanup;
   }
 
-  if ((err = pwm_db_get(db, "passwd", key, &buf)) < 0) {
+  if (!opts->force && pwm_db_has(db, "notes", key)) {
+    fprintf(stderr, "note for %s already exists\n", key);
+    err = -1;
     goto cleanup;
   }
 
-  if (!opts->clip) {
-    fprintf(stdout, "%s\n", buf.buf);
+  if ((err = pwm_str_read_all(&buf, STDIN_FILENO)) < 0) {
     goto cleanup;
   }
-
-  if ((err = pwm_clip_set(&buf)) >= 0) {
-    fprintf(stderr, "stored you %s password in the clipboard\n", key);
-  }
+  err = pwm_db_set(db, "notes", key, opts->msg, &buf);
 
 cleanup:
+  pwm_db_clean(db);
   pwm_db_free(db);
   pwm_str_free(&buf);
   return err;
@@ -57,14 +60,17 @@ cleanup:
 
 int
 main(int argc, char **argv) {
-  char c;
-  int err;
   opts_t opts = OPTS_DEFAULT;
+  int err;
+  char c;
 
-  while ((c = getopt(argc, argv, "ch")) > -1) {
+  while ((c = getopt(argc, argv, "fhm:")) > -1) {
     switch (c) {
-    case 'c':
-      opts.clip = 1;
+    case 'f':
+      opts.force = 1;
+      break;
+    case 'm':
+      opts.msg = optarg;
       break;
     default:
       usage();

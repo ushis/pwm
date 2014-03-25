@@ -23,4 +23,8 @@ pwm-get
 pwm-list
 pwm-log
 pwm-note
+pwm-note-del
+pwm-note-get
+pwm-note-list
+pwm-note-set
 pwm-set

@@ -147,7 +147,6 @@ main(int argc, char **argv) {
 
   if ((cmd = cmd_find(argv[i])) == NULL) {
     usage();
-    exit(EXIT_FAILURE);
   }
   exit(cmd_exec(cmd, &argv[i]));
 }

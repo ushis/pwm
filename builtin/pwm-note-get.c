@@ -3,7 +3,7 @@
 #include <getopt.h>
 
 static const char *usage_str =
-  "pwm list [<opts>]\n\n"
+  "pwm note get [<opts>] <key>\n\n"
   "options:\n"
   "  -h              show this help";
 
@@ -14,20 +14,29 @@ usage() {
 }
 
 static int
-print_ln(const char *line) {
-  return printf("%s\n", line);
-}
-
-static int
-run() {
+run(const char *key) {
+  pwm_db_t *db = NULL;
+  PWM_STR_INIT(buf);
   int err;
-  pwm_db_t *db;
 
   if ((err = pwm_db_new(&db, NULL, NULL)) < 0) {
-    return err;
+    goto cleanup;
   }
-  err = pwm_db_list(db, "passwd", print_ln);
+
+  if (!pwm_db_has(db, "notes", key)) {
+    fprintf(stderr, "couldn't find your %s note\n", key);
+    err = -1;
+    goto cleanup;
+  }
+
+  if ((err = pwm_db_get(db, "notes", key, &buf)) < 0) {
+    goto cleanup;
+  }
+  fputs(buf.buf, stdout);
+
+cleanup:
   pwm_db_free(db);
+  pwm_str_free(&buf);
   return err;
 }
 
@@ -38,8 +47,12 @@ main(int argc, char **argv) {
   while (getopt(argc, argv, "h") > -1) {
     usage(); /* -h is the only valid option */
   }
+
+  if (optind >= argc) {
+    usage();
+  }
   pwm_init();
-  err = run();
+  err = run(argv[optind]);
   pwm_shutdown();
   exit(err < 0);
 }

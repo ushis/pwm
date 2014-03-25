@@ -130,12 +130,3 @@ cleanup:
   gpgme_free(buf);
   return rc;
 }
-
-int
-pwm_gpg_encrypt_armor(pwm_gpg_t *gpg, pwm_str_t *dst, const pwm_str_t *src) {
-  int err;
-  gpgme_set_armor(gpg->ctx, 1);
-  err = pwm_gpg_encrypt(gpg, dst, src);
-  gpgme_set_armor(gpg->ctx, 0);
-  return err;
-}

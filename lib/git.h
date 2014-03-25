@@ -47,42 +47,46 @@ void pwm_git_free(pwm_git_t *git);
 int pwm_git_clean(pwm_git_t *git);
 
 /**
- * Retrieves a blob from the git tree.
+ * Retrieves a blob from a directory.
  *
- * @param  git   The git handler
- * @param  path  Path to blob
- * @param  s     String pointer to store blobs contents in
+ * @param  git  The git handler
+ * @param  dir  Name of the directory
+ * @param  key  Key of the blob
+ * @param  s    String pointer to store blobs contents in
  * @return 0 on success or an error code
  */
-int pwm_git_get(pwm_git_t *git, const char *path, pwm_str_t *s);
+int pwm_git_get(pwm_git_t *git, const char *dir, const char *key, pwm_str_t *s);
 
 /**
- * Checks if blob exists in the git tree.
+ * Checks if blob exists in a directory.
  *
- * @param  git   The git handler
- * @param  path  Path to the blob
+ * @param  git  The git handler
+ * @param  dir  Name of the directory
+ * @param  key  Key of the blob
  * @return 0 on success or an error code
  */
-int pwm_git_has(pwm_git_t *git, const char *path);
+int pwm_git_has(pwm_git_t *git, const char *dir, const char *key);
 
 /**
- * Adds a blob to the git tree.
+ * Adds a blob to a directory.
  *
- * @param  git   The git handler
- * @param  path  The path to the blob
- * @param  s     String pointer with blobs contents
+ * @param  git  The git handler
+ * @param  dir  Name of the directory
+ * @param  key  Key of the blob
+ * @param  s    String pointer with blobs contents
  * @return 0 on success or an error code
  */
-int pwm_git_add(pwm_git_t *git, const char *path, const pwm_str_t *s);
+int pwm_git_add(pwm_git_t *git, const char *dir, const char *key, const pwm_str_t *s);
 
 /**
- * Removes a blob from the git tree.
+ * Removes a blob from a directory.
  *
- * @param  git   The git handler
- * @param  path  Path to the blob
+ * @param  git  The git handler
+ * @param  dir  Name of the directory
+ * @param  key  Key of the blob
  * @return 0 on success or an error code
  */
-int pwm_git_rm(pwm_git_t *git, const char *path);
+int pwm_git_rm(pwm_git_t *git, const char *dir, const char *key);
 
 /**
  * Commits all changes in the git tree.
@@ -93,46 +97,18 @@ int pwm_git_rm(pwm_git_t *git, const char *path);
  */
 int pwm_git_commit(pwm_git_t *git, const char *msg);
 
-/**
- * Retrieves a blob note.
- *
- * @param  git   The git handler
- * @param  path  Path to the blob
- * @param  s     String pointer to store the notes contents in
- * @return 0 on success or an error code
- */
-int pwm_git_note_get(pwm_git_t *git, const char *path, pwm_str_t *s);
-
-/**
- * Sets a blob note.
- *
- * @param  git   The git handler
- * @param  path  Path to the blob
- * @param  s     String pointer with the notes contents
- * @return 0 on success or an error code
- */
-int pwm_git_note_set(pwm_git_t *git, const char *path, const pwm_str_t *s);
-
-/**
- * Removes a blob note.
- *
- * @param  git   The git handler
- * @param  path  Path to the blob
- * @return 0 on success or an error code
- */
-int pwm_git_note_rm(pwm_git_t *git, const char *path);
-
 /** Callback function used by pwm_git_walk_entries() */
-typedef int (*pwm_git_walk_entries_cb)(const char *name);
+typedef int (*pwm_git_walk_entries_cb)(const char *key);
 
 /**
- * Walks all entries in the git tree.
+ * Walks all entries in a directory.
  *
  * @param  git  The git handler
- * @param  cb   Function to call on each tree entry
+ * @param  dir  Name of the directory
+ * @param  cb   Function to call on each entry
  * @return 0 on success or an error code
  */
-int pwm_git_walk_entries(pwm_git_t *git, pwm_git_walk_entries_cb cb);
+int pwm_git_walk_entries(pwm_git_t *git, const char *dir, pwm_git_walk_entries_cb cb);
 
 /** Callback function used by pwm_git_walk_log() */
 typedef int (*pwm_git_walk_log_cb)(int64_t time, const char *name, const char *msg);
