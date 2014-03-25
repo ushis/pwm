@@ -153,13 +153,9 @@ __pwm_note_get() {
 }
 
 __pwm_note_set() {
-  local keys=''
-
-  __pwm_force && keys='*:key:__pwm_note_keys'
-
   _arguments \
+    '*:key:__pwm_keys' \
     '-f[override existing note]' \
     '-h[show help]' \
-    '-m+[custom log message]:msg' \
-    $keys
+    '-m+[custom log message]:msg'
 }
