@@ -6,6 +6,7 @@ TCase *pwm_gen_tests();
 TCase *pwm_git_tests();
 TCase *pwm_gpg_tests();
 TCase *pwm_hex_tests();
+TCase *pwm_read_tests();
 TCase *pwm_str_tests();
 
 int
@@ -19,6 +20,7 @@ main() {
   suite_add_tcase(s, pwm_git_tests());
   suite_add_tcase(s, pwm_gpg_tests());
   suite_add_tcase(s, pwm_hex_tests());
+  suite_add_tcase(s, pwm_read_tests());
   suite_add_tcase(s, pwm_str_tests());
 
   srunner_run_all(sr, CK_NORMAL);
