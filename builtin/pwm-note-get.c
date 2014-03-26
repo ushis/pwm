@@ -42,17 +42,24 @@ cleanup:
 
 int
 main(int argc, char **argv) {
+  char c, *key = NULL;
   int err;
 
-  while (getopt(argc, argv, "h") > -1) {
-    usage(); /* -h is the only valid option */
+  while ((c = getopt(argc, argv, "-:h")) > -1) {
+    switch (c) {
+    case 1:
+      key = optarg;
+      break;
+    default:
+      usage();
+    }
   }
 
-  if (optind >= argc) {
+  if (key == NULL) {
     usage();
   }
   pwm_init();
-  err = run(argv[optind]);
+  err = run(key);
   pwm_shutdown();
   exit(err < 0);
 }

@@ -89,12 +89,15 @@ cleanup:
 
 int
 main(int argc, char **argv) {
-  char c;
-  int err;
   opts_t opts = OPTS_DEFAULT;
+  char c, *key = NULL;
+  int err;
 
-  while ((c = getopt(argc, argv, "cfg:hl:m:p")) > -1) {
+  while ((c = getopt(argc, argv, "-:cfg:hl:m:p")) > -1) {
     switch (c) {
+    case 1:
+      key = optarg;
+      break;
     case 'c':
       opts.clip = 1;
       break;
@@ -118,7 +121,7 @@ main(int argc, char **argv) {
     }
   }
 
-  if (optind >= argc) {
+  if (key == NULL) {
     usage();
   }
 
@@ -127,7 +130,7 @@ main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
   pwm_init();
-  err = run(&opts, argv[optind]);
+  err = run(&opts, key);
   pwm_shutdown();
   exit(err < 0);
 }

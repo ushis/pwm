@@ -35,7 +35,7 @@ int
 main(int argc, char **argv) {
   int err;
 
-  while (getopt(argc, argv, "h") > -1) {
+  while (getopt(argc, argv, ":h") > -1) {
     usage(); /* -h is the only valid option */
   }
   pwm_init();

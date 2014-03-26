@@ -63,7 +63,7 @@ __pwm_arguments() {
 
 __pwm_del() {
   _arguments \
-    '*:key:__pwm_keys' \
+    ':key:__pwm_keys' \
     '-f[ignore nonexistent passwords]' \
     '-h[show help]' \
     '-m+[custom log message]:msg'
@@ -95,7 +95,7 @@ __pwm_gen() {
 
 __pwm_get() {
   _arguments \
-    '*:key:__pwm_keys' \
+    ':key:__pwm_keys' \
     '-c[store password in the clipboard]' \
     '-h[show help]'
 }
@@ -140,7 +140,7 @@ __pwm_note_arguments() {
 
 __pwm_note_del() {
   _arguments \
-    '*:key:__pwm_note_keys' \
+    ':key:__pwm_note_keys' \
     '-f[ignore nonexistent notes]' \
     '-h[show help]' \
     '-m+[custom log message]:msg'
@@ -148,13 +148,13 @@ __pwm_note_del() {
 
 __pwm_note_get() {
   _arguments \
-    '*:key:__pwm_note_keys' \
+    ':key:__pwm_note_keys' \
     '-h[show help]'
 }
 
 __pwm_note_set() {
   _arguments \
-    '*:key:__pwm_keys' \
+    ':key:__pwm_keys' \
     '-f[override existing note]' \
     '-h[show help]' \
     '-m+[custom log message]:msg'
