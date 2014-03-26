@@ -99,6 +99,48 @@ pwm_str_cmp(pwm_str_t *a, pwm_str_t *b) {
 }
 
 int
+pwm_str_fmt(pwm_str_t *s, const char *fmt, ...) {
+  va_list ap;
+  int err;
+
+  va_start(ap, fmt);
+  err = pwm_str_vfmt(s, fmt, ap);
+  va_end(ap);
+  return err;
+}
+
+int
+pwm_str_vfmt(pwm_str_t *s, const char *fmt, va_list ap) {
+  va_list cp;
+  int len;
+
+  if (s->cap == 0 && pwm_str_resize(s, 31) < 0) {
+    return -1;
+  }
+
+  for (;;) {
+    va_copy(cp, ap);
+    len = vsnprintf(s->buf, s->cap+1, fmt, cp);
+    va_end(cp);
+
+    if (len < 0) {
+      perror("pwm_str_fmt: vsnprintf");
+      return -1;
+    }
+
+    if (len <= s->cap) {
+      break;
+    }
+
+    if (pwm_str_resize(s, len) < 0) {
+      return -1;
+    }
+  }
+  s->len = len;
+  return 0;
+}
+
+int
 pwm_str_read_all(pwm_str_t *s, int fd) {
   ssize_t n;
   size_t i = 0;
@@ -109,7 +151,7 @@ pwm_str_read_all(pwm_str_t *s, int fd) {
     }
 
     if ((n = read(fd, &s->buf[i], s->cap-i)) < 0) {
-      perror("read");
+      perror("pwm_str_read_all: read");
       return -1;
     }
 

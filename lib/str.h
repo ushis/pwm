@@ -2,6 +2,7 @@
 #define STR_H 1
 
 #include <stdio.h>
+#include <stdarg.h>
 
 /** Representation of a string. */
 typedef struct {
@@ -86,6 +87,27 @@ void pwm_str_shrink(pwm_str_t *s, size_t n);
  * @return 0 if the a and b are equal - see man memcmp for more info
  */
 int pwm_str_cmp(pwm_str_t *a, pwm_str_t *b);
+
+/**
+ * Formats a string printf style.
+ *
+ * @param  s    String pointer
+ * @param  fmt  Format string (see printf man page)
+ * @param  ...  Variable number of format arguments (see printf man page)
+ * @return 0 on success or an error code
+ */
+int pwm_str_fmt(pwm_str_t *s, const char *fmt, ...);
+
+/**
+ * Same as pwm_str_fmt, but takes a va_list instead of a variable number of
+ * arguments.
+ *
+ * @param  s    String pointer
+ * @param  fmt  Format string (see printf man page)
+ * @param  ap   Variable argument list (see stdarg man page)
+ * @return 0 on success or an error code
+ */
+int pwm_str_vfmt(pwm_str_t *s, const char *fmt, va_list ap);
 
 /**
  * Reads from a file descriptor until EOF.

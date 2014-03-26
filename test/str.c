@@ -102,6 +102,26 @@ START_TEST(test_pwm_str_cmp) {
 }
 END_TEST
 
+START_TEST(test_pwm_str_fmt) {
+  PWM_STR_INIT(a);
+  const char *s = "sample sample sample";
+
+  ck_assert_int_eq(pwm_str_fmt(&a, "hello world"), 0);
+  ck_assert_str_eq(a.buf, "hello world");
+  ck_assert_int_eq(a.len, 11);
+
+  ck_assert_int_eq(pwm_str_fmt(&a, "%d + %d\n=> %s", 22, 31, s), 0);
+  ck_assert_str_eq(a.buf, "22 + 31\n=> sample sample sample");
+  ck_assert_int_eq(a.len, 31);
+
+  ck_assert_int_eq(pwm_str_fmt(&a, "%s:%s %s", "hello", "world", s), 0);
+  ck_assert_str_eq(a.buf, "hello:world sample sample sample");
+  ck_assert_int_eq(a.len, 32);
+
+  pwm_str_free(&a);
+}
+END_TEST
+
 START_TEST(test_pwm_str_read_all) {
   pid_t pid;
   int fd[2], rc;
@@ -184,6 +204,7 @@ pwm_str_tests() {
   tcase_add_test(tc, test_pwm_str_append_path_component);
   tcase_add_test(tc, test_pwm_str_shrink);
   tcase_add_test(tc, test_pwm_str_cmp);
+  tcase_add_test(tc, test_pwm_str_fmt);
   tcase_add_test(tc, test_pwm_str_read_all);
   tcase_add_test(tc, test_pwm_str_read_line);
   tcase_add_test(tc, test_pwm_str_hex_encode);
