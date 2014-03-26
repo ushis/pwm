@@ -50,26 +50,28 @@ run(opts_t *opts, const char *key) {
   if ((err = pwm_db_new(&db, NULL, NULL)) < 0) {
     goto cleanup;
   }
+  err = -1;
 
   if (!opts->force && pwm_db_has(db, "passwd", key)) {
     fprintf(stderr, "password for %s already exists\n", key);
-    err = -1;
     goto cleanup;
   }
 
   if ((gen = pwm_gen_by_name(opts->generator)) == NULL) {
     fprintf(stderr, "unknown generator: %s\n", opts->generator);
-    err = -1;
+    goto cleanup;
+  }
+
+  if (opts->len < 1 || opts->len > 4<<10) {
+    fprintf(stderr, "invalid length: %ld\n", opts->len);
     goto cleanup;
   }
 
   if ((err = gen->func(&buf, opts->len)) < 0) {
     goto cleanup;
   }
-  err = pwm_db_set(db, "passwd", key, opts->msg, &buf);
-  pwm_db_clean(db);
 
-  if (err < 0) {
+  if ((err = pwm_db_set(db, "passwd", key, opts->msg, &buf)) < 0) {
     goto cleanup;
   }
 
@@ -82,6 +84,7 @@ run(opts_t *opts, const char *key) {
   }
 
 cleanup:
+  pwm_db_clean(db);
   pwm_db_free(db);
   pwm_str_free(&buf);
   return err;
@@ -123,11 +126,6 @@ main(int argc, char **argv) {
 
   if (key == NULL) {
     usage();
-  }
-
-  if (opts.len < 1 || opts.len > 4<<10) {
-    fprintf(stderr, "invalid password length: %ld\n", opts.len);
-    exit(EXIT_FAILURE);
   }
   pwm_init();
   err = run(&opts, key);
