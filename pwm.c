@@ -97,25 +97,11 @@ cmd_exec(const cmd_t *cmd, char **argv) {
 
 int
 main(int argc, char **argv) {
-  int i;
-  char c;
-  size_t len;
-  const cmd_t *cmd;
   opts_t opts = OPTS_DEFAULT;
+  const cmd_t *cmd;
+  char c;
 
-  /* find position of the subcommand */
-  for (i = 1; i < argc; i++) {
-    if ((len = strlen(argv[i])) < 2 || argv[i][0] != '-') {
-      break;
-    }
-    c = argv[i][1];
-
-    if (len == 2 && c != 'h' && c != 'v') {
-      i++;
-    }
-  }
-
-  while ((c = getopt(i, argv, "d:hk:v")) >= 0) {
+  while ((c = getopt(argc, argv, "+:d:hk:v")) > -1) {
     switch (c) {
     case 'd':
       opts.home = optarg;
@@ -131,7 +117,7 @@ main(int argc, char **argv) {
     }
   }
 
-  if (i >= argc) {
+  if (optind >= argc) {
     usage();
   }
 
@@ -145,8 +131,8 @@ main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  if ((cmd = cmd_find(argv[i])) == NULL) {
+  if ((cmd = cmd_find(argv[optind])) == NULL) {
     usage();
   }
-  exit(cmd_exec(cmd, &argv[i]));
+  exit(cmd_exec(cmd, &argv[optind]));
 }
