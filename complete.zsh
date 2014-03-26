@@ -12,6 +12,7 @@
 # Maybe you have to purge your compdump.
 _pwm() {
   local curcontext="$curcontext" state line
+  typeset -A opt_args
 
   _arguments \
     '1: :__pwm_commands' \
@@ -23,21 +24,28 @@ _pwm() {
 }
 
 __pwm_force() {
-  local w
+  # check for the -f flag in the alreday typed words
+  test ${words[(i)-f]} -le ${#words}
+}
 
-  for w in $words; do
-    [[ "${w}" == '-f' ]] && return 0
-  done
+__pwm_exec() {
+  # Is pwm installed?
+  type pwm &>/dev/null || return 1
 
-  return 1
+  # Execute.
+  if test -z "${db}"; then
+    pwm $* 2>/dev/null
+  else
+    pwm -d "${db}" $* 2>/dev/null
+  fi
 }
 
 __pwm_keys() {
-  compadd $(type pwm &>/dev/null && pwm list 2>/dev/null)
+  compadd $(__pwm_exec list)
 }
 
 __pwm_note_keys() {
-  compadd $(type pwm &>/dev/null && pwm note list 2>/dev/null)
+  compadd $(__pwm_exec note list)
 }
 
 __pwm_commands() {
@@ -52,6 +60,8 @@ __pwm_commands() {
 }
 
 __pwm_arguments() {
+  local db=${opt_args[-d]}
+
   case "${words[1]}" in
     del|gen|get|note|set)
       __pwm_${words[1]} && return 0
