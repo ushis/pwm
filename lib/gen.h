@@ -2,7 +2,6 @@
 #define GEN_H 1
 
 #include "str.h"
-#include "hex.h"
 
 /** Representation of a generator. */
 typedef struct {
