@@ -185,7 +185,7 @@ pwm_git_tree(pwm_git_t *git, const char *name, git_tree **tree) {
     *tree = NULL;
     return 0;
   }
-  return git_tree_entry_to_object((git_object **) tree, git->repo, entry);
+  return git_tree_lookup(tree, git->repo, git_tree_entry_id(entry));
 }
 
 static int
@@ -233,7 +233,7 @@ pwm_git_get(pwm_git_t *git, const char *dir, const char *key, pwm_str_t *s) {
     goto cleanup;
   }
 
-  if ((err = git_tree_entry_to_object((git_object **) &blob, git->repo, entry)) < 0) {
+  if ((err = git_blob_lookup(&blob, git->repo, git_tree_entry_id(entry))) < 0) {
     fprintf(stderr, "pwm_git_get: %s\n", giterr_last()->message);
     goto cleanup;
   }
