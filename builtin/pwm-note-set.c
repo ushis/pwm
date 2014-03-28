@@ -49,6 +49,12 @@ run(opts_t *opts, const char *key) {
   if ((err = pwm_str_read_all(&buf, STDIN_FILENO)) < 0) {
     goto cleanup;
   }
+
+  if (buf.len == 0) {
+    fputs("i am not going to save an empty note\n", stderr);
+    err = -1;
+    goto cleanup;
+  }
   err = pwm_db_set(db, "notes", key, opts->msg, &buf);
 
 cleanup:

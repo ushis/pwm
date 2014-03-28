@@ -56,6 +56,12 @@ run(opts_t *opts, const char *key) {
     goto cleanup;
   }
 
+  if (buf.len == 0) {
+    fputs("i am not going to save an empty password\n", stderr);
+    err = -1;
+    goto cleanup;
+  }
+
   if ((err = pwm_db_set(db, "passwd", key, opts->msg, &buf)) < 0) {
     goto cleanup;
   }

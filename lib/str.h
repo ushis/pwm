@@ -33,6 +33,15 @@ int pwm_str_resize(pwm_str_t *s, size_t n);
 void pwm_str_free(pwm_str_t *s);
 
 /**
+ * Sets the length of a string after checking bounds.
+ *
+ * @param  s  String pointer
+ * @param  n  The new length
+ * @return 0 on success or an error code
+ */
+int pwm_str_set_len(pwm_str_t *s, size_t n);
+
+/**
  * Copies a string.
  *
  * @param  dst  String pointer to store the result

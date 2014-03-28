@@ -28,9 +28,7 @@ pwm_gen_rand(pwm_str_t *s, size_t n) {
     fprintf(stderr, "pwm_gen_rand: urandom is broken\n");
     return -1;
   }
-  s->buf[n] = '\0';
-  s->len = n;
-  return 0;
+  return pwm_str_set_len(s, n);
 }
 
 static const char *alnum =

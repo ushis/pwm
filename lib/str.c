@@ -36,6 +36,20 @@ pwm_str_free(pwm_str_t *s) {
 }
 
 int
+pwm_str_set_len(pwm_str_t *s, size_t n) {
+  if (n > s->cap) {
+    fprintf(stderr, "pwm_str_set_len: n beyond buffer: %ld\n", n);
+    return -1;
+  }
+  s->len = n;
+
+  if (s->buf != NULL) {
+    s->buf[n] = '\0';
+  }
+  return 0;
+}
+
+int
 pwm_str_cpy(pwm_str_t *dst, pwm_str_t *src) {
   return pwm_str_set(dst, src->buf, src->len);
 }
@@ -46,9 +60,7 @@ pwm_str_set(pwm_str_t *s, const char *buf, size_t n) {
     return -1;
   }
   memcpy(s->buf, buf, n);
-  s->buf[n] = '\0';
-  s->len = n;
-  return 0;
+  return pwm_str_set_len(s, n);
 }
 
 int
@@ -59,9 +71,7 @@ pwm_str_append(pwm_str_t *s, const char *buf, size_t n) {
     return -1;
   }
   memcpy(&s->buf[s->len], buf, n);
-  s->buf[len] = '\0';
-  s->len = len;
-  return 0;
+  return pwm_str_set_len(s, len);
 }
 
 int
@@ -73,8 +83,8 @@ pwm_str_append_path_component(pwm_str_t *s, const char *buf, size_t n) {
   }
 
   if (s->len > 0 && s->buf[s->len-1] != '/') {
-    s->buf[s->len] = '/';
-    s->len++;
+    s->buf[s->len++] = '/';
+    s->buf[s->len] = '\0';
   }
   return pwm_str_append(s, buf, n);
 }
@@ -82,8 +92,7 @@ pwm_str_append_path_component(pwm_str_t *s, const char *buf, size_t n) {
 void
 pwm_str_shrink(pwm_str_t *s, size_t n) {
   if (s->len > n) {
-    s->buf[n] = '\0';
-    s->len = n;
+    pwm_str_set_len(s, n);
   }
 }
 
@@ -160,9 +169,7 @@ pwm_str_read_all(pwm_str_t *s, int fd) {
     }
     i += n;
   }
-  s->buf[i] = '\0';
-  s->len = i;
-  return 0;
+  return pwm_str_set_len(s, i);
 }
 
 int
@@ -180,9 +187,7 @@ pwm_str_read_line(pwm_str_t *s, FILE *stream) {
     }
     s->buf[i++] = c;
   }
-  s->buf[i] = '\0';
-  s->len = i;
-  return 0;
+  return pwm_str_set_len(s, i);
 }
 
 int
@@ -193,9 +198,7 @@ pwm_str_hex_encode(pwm_str_t *dst, const char *buf, size_t n) {
     return -1;
   }
   pwm_hex_encode(dst->buf, buf, n);
-  dst->buf[len] = '\0';
-  dst->len = len;
-  return 0;
+  return pwm_str_set_len(dst, len);
 }
 
 int
@@ -209,7 +212,5 @@ pwm_str_hex_decode(pwm_str_t *dst, const char *buf, size_t n) {
   if (pwm_hex_decode(dst->buf, buf, n) < 0) {
     return -1;
   }
-  dst->buf[len] = '\0';
-  dst->len = len;
-  return 0;
+  return pwm_str_set_len(dst, len);
 }
