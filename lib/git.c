@@ -139,7 +139,7 @@ pwm_git_clean(pwm_git_t *git) {
   git_oid id;
   git_object *obj = NULL;
   git_reset_t reset_type = GIT_RESET_HARD;
-  git_checkout_opts opts = GIT_CHECKOUT_OPTS_INIT;
+  git_checkout_options opts = GIT_CHECKOUT_OPTIONS_INIT;
 
   if ((err = git_reference_name_to_id(&id, git->repo, "HEAD")) < 0) {
     goto cleanup;
@@ -153,7 +153,7 @@ pwm_git_clean(pwm_git_t *git) {
     reset_type = GIT_RESET_SOFT;
   }
 
-  if ((err = git_reset(git->repo, obj, reset_type))  < 0) {
+  if ((err = git_reset(git->repo, obj, reset_type, git->sig, NULL))  < 0) {
     goto cleanup;
   }
 
