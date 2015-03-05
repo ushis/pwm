@@ -14,7 +14,7 @@ setup(pwm_db_t **db) {
   pwm_gpg_init();
   ck_assert_int_eq(system("rm -rf test/git"), 0);
   ck_assert_int_eq(setenv("GNUPGHOME", "test/gnupg", 1), 0);
-  ck_assert_int_eq(pwm_db_new(db, "test/git", "A2D17C4B"), 0);
+  ck_assert_int_eq(pwm_db_new(db, "test/git", "51C6592C"), 0);
 }
 
 START_TEST(test_pwm_db_get) {

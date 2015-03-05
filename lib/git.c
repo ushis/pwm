@@ -10,12 +10,12 @@
 
 int
 pwm_git_init() {
-  return git_threads_init();
+  return git_libgit2_init();
 }
 
 void
 pwm_git_shutdown() {
-  git_threads_shutdown();
+  git_libgit2_shutdown();
 }
 
 static int
@@ -139,7 +139,7 @@ pwm_git_clean(pwm_git_t *git) {
   git_oid id;
   git_object *obj = NULL;
   git_reset_t reset_type = GIT_RESET_HARD;
-  git_checkout_options opts = GIT_CHECKOUT_OPTIONS_INIT;
+  git_checkout_options checkout_opts = GIT_CHECKOUT_OPTIONS_INIT;
 
   if ((err = git_reference_name_to_id(&id, git->repo, "HEAD")) < 0) {
     goto cleanup;
@@ -151,16 +151,10 @@ pwm_git_clean(pwm_git_t *git) {
 
   if (git_repository_is_bare(git->repo)) {
     reset_type = GIT_RESET_SOFT;
+  } else {
+    checkout_opts.checkout_strategy = GIT_CHECKOUT_REMOVE_UNTRACKED;
   }
-
-  if ((err = git_reset(git->repo, obj, reset_type, git->sig, NULL))  < 0) {
-    goto cleanup;
-  }
-
-  if (reset_type == GIT_RESET_HARD) {
-    opts.checkout_strategy = GIT_CHECKOUT_REMOVE_UNTRACKED;
-    err = git_checkout_head(git->repo, &opts);
-  }
+  err = git_reset(git->repo, obj, reset_type, &checkout_opts, git->sig, NULL);
 
 cleanup:
   git_object_free(obj);
@@ -193,7 +187,7 @@ pwm_git_tree_add(pwm_git_t *git, const char *name, git_oid *id) {
   git_treebuilder *bld = NULL;
   int err;
 
-  if ((err = git_treebuilder_create(&bld, git->tree)) < 0) {
+  if ((err = git_treebuilder_new(&bld, git->repo, git->tree)) < 0) {
     goto cleanup;
   }
 
@@ -201,7 +195,7 @@ pwm_git_tree_add(pwm_git_t *git, const char *name, git_oid *id) {
     goto cleanup;
   }
 
-  if ((err = git_treebuilder_write(id, git->repo, bld)) < 0) {
+  if ((err = git_treebuilder_write(id, bld)) < 0) {
     goto cleanup;
   }
 
@@ -278,7 +272,7 @@ pwm_git_add(pwm_git_t *git, const char *dir, const char *key, const pwm_str_t *s
     goto cleanup;
   }
 
-  if ((err = git_treebuilder_create(&bld, tree)) < 0) {
+  if ((err = git_treebuilder_new(&bld, git->repo, tree)) < 0) {
     fprintf(stderr, "pwm_git_add: %s\n", giterr_last()->message);
     goto cleanup;
   }
@@ -288,7 +282,7 @@ pwm_git_add(pwm_git_t *git, const char *dir, const char *key, const pwm_str_t *s
     goto cleanup;
   }
 
-  if ((err = git_treebuilder_write(&id, git->repo, bld)) < 0) {
+  if ((err = git_treebuilder_write(&id, bld)) < 0) {
     fprintf(stderr, "pwm_git_add: %s\n", giterr_last()->message);
     goto cleanup;
   }
@@ -315,7 +309,7 @@ pwm_git_rm(pwm_git_t *git, const char *dir, const char *key) {
     goto cleanup;
   }
 
-  if ((err = git_treebuilder_create(&bld, tree)) < 0) {
+  if ((err = git_treebuilder_new(&bld, git->repo, tree)) < 0) {
     fprintf(stderr, "pwm_git_rm: %s\n", giterr_last()->message);
     goto cleanup;
   }
@@ -325,7 +319,7 @@ pwm_git_rm(pwm_git_t *git, const char *dir, const char *key) {
     goto cleanup;
   }
 
-  if ((err = git_treebuilder_write(&id, git->repo, bld)) < 0) {
+  if ((err = git_treebuilder_write(&id, bld)) < 0) {
     fprintf(stderr, "pwm_git_rm: %s\n", giterr_last()->message);
     goto cleanup;
   }

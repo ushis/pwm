@@ -11,7 +11,7 @@ static void
 setup(pwm_gpg_t **gpg) {
   pwm_gpg_init();
   ck_assert_int_eq(setenv("GNUPGHOME", "test/gnupg", 1), 0);
-  ck_assert_int_eq(pwm_gpg_new(gpg, "A2D17C4B"), 0);
+  ck_assert_int_eq(pwm_gpg_new(gpg, "51C6592C"), 0);
 }
 
 START_TEST(test_pwm_gpg_decrypt) {
