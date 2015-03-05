@@ -15,7 +15,7 @@ BIN := $(patsubst %.c,%,$(SRC))
 
 CPPFLAGS += -D_POSIX_C_SOURCE=200112L
 CFLAGS += -std=c99 -Wall -O2 -Ilib
-LDFLAGS += -lgpgme -lgit2
+LDFLAGS := -lgpgme -lgit2 $(LDFLAGS)
 
 TESTCFLAGS = $(CFLAGS) -Itest
 TESTLDFLAGS = $(LDFLAGS) -lcheck
