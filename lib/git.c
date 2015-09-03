@@ -154,7 +154,7 @@ pwm_git_clean(pwm_git_t *git) {
   } else {
     checkout_opts.checkout_strategy = GIT_CHECKOUT_REMOVE_UNTRACKED;
   }
-  err = git_reset(git->repo, obj, reset_type, &checkout_opts, git->sig, NULL);
+  err = git_reset(git->repo, obj, reset_type, &checkout_opts);
 
 cleanup:
   git_object_free(obj);
