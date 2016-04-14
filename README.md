@@ -57,6 +57,7 @@ Download a release tarball or clone the repo:
 
 Building pwm is as easy as:
 
+    autoconf -o configure configure.ac
     ./configure --prefix=/usr --with-pwmexecdir=/usr/lib/pwm
     make
     make install
