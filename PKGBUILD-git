@@ -8,7 +8,7 @@ url="github.com/ushis/pwm"
 license=('GPL')
 depends=('libgit2' 'gpgme')
 optdepends=('xclip: clipboard support')
-checkdepends=('check')
+makedepends=('git' 'check')
 provides=('pwm')
 conflicts=('pwm')
 source=('pwm::git+https://github.com/ushis/pwm.git#branch=master')
